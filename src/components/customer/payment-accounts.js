@@ -29,14 +29,14 @@ class PaymentAccounts extends Component {
         }];
 
         if (messageError === 'AccessToken is not valid') {
-            this.props.resetStore();
+            // this.props.resetStore();
             return (<Redirect to={{
                 // pathname: '/signin',
             }} />);
         }
 
         if (messageError === 'AccessToken is not valid') {
-            this.props.resetStore();
+            // this.props.resetStore();
             return (<Redirect to={{
                 // pathname: '/signin',
             }} />);
@@ -59,9 +59,15 @@ class PaymentAccounts extends Component {
         )
 
         return (
-            <div>
+            <div className='main-content payment-account'>
+                {isLoading && (
+                    <Spin tip="Loading ..." size='large'>
+                        {contentLayout}
+                    </Spin>
+                )}
 
-            </ div>
+                {!isLoading && contentLayout}
+            </div>
         );
     }
 }
