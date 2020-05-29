@@ -28,7 +28,35 @@ class PaymentAccounts extends Component {
             sorter: (a, b) => a.balance - b.balance,
         }];
 
-      
+        if (messageError === 'AccessToken is not valid') {
+            this.props.resetStore();
+            return (<Redirect to={{
+                // pathname: '/signin',
+            }} />);
+        }
+
+        if (messageError === 'AccessToken is not valid') {
+            this.props.resetStore();
+            return (<Redirect to={{
+                // pathname: '/signin',
+            }} />);
+        }
+        const contentLayout = (
+            <React.Fragment>
+                {messageError ?
+                    notification.open({
+                        message: messageError,
+                        icon: <Icon type="warning" style={{ color: 'red' }} />,
+                    }) : null}
+
+                <Table
+                    columns={columns}
+                    dataSource={formatWallet(this.props.paymentAccounts)}
+                    pagination={{ pageSize: 10 }}
+                    scroll={{ y: '60vh' }}
+                    bordered />
+            </React.Fragment>
+        )
 
         return (
             <div>
