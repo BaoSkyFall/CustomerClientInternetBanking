@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Table, Spin, notification, Icon, Popconfirm } from 'antd';
 import { Redirect } from 'react-router-dom';
-import { ACCESS_TOKEN_KEY, EMAIL_KEY } from '../../configs/client'
+import { ACCESS_TOKEN_KEY, EMAIL_KEY } from '../../../configs/client'
 class PaymentAccounts extends Component {
     constructor(props) {
         super(props);

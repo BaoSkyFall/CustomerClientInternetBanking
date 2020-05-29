@@ -6,7 +6,7 @@ import {
     FETCH_PAYMENT_ACCOUNTS_FAIL,
     TOGGLE_MODAL,
     RESET_STORE
-} from '../constants/customer/payment-accounts';
+} from '../../constants/customer/payment-accounts';
 import { URL_SERVER, URL_SERVER_DEPLOY } from '../../configs/server';
 
 const fetchPaymentAccounts = (email, accessToken) => {
