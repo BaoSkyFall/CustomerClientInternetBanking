@@ -7,7 +7,7 @@ import paymentAccountsReducer from './payment-accounts';
 
 export default combineReducers({
   // authReducer,
-  LoginReducer,
+  // LoginReducer,
 
   paymentAccountsReducer,
 });

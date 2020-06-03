@@ -9,10 +9,10 @@ import {
 import { URL_SERVER, URL_SERVER_DEPLOY } from '../../configs/server';
 
 const fetchPaymentAccounts = (email, accessToken) => {
-  return (dispatch) => {
-    dispatch({ type: "FETCH_PAYMENT_ACCOUNTS" });
+    return (dispatch) => {
+        dispatch({ type: FETCH_PAYMENT_ACCOUNTS });
 
-        return axios.post(URL_SERVER_DEPLOY, {})
+        return axios.post(URL_SERVER_DEPLOY,{})
         .then(res => {
             if (!res.data.errors) {
                 dispatch({
@@ -27,41 +27,31 @@ const fetchPaymentAccounts = (email, accessToken) => {
                 });
             }
         })
-      )
-      .then((res) => {
-        if (!res.data.errors) {
-          dispatch({
-            type: "FETCH_PAYMENT_ACCOUNTS_SUCCESS",
-            paymentAccounts: res.data.data.wallets,
-          });
-        } else {
-          dispatch({
-            type: "FETCH_PAYMENT_ACCOUNTS_FAIL",
-            messageError: res.data.errors[0].message,
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-};
+        .catch(error => {
+            console.log(error);
+        })
+    }
+}
 
 const resetStore = () => {
-  return (dispatch) => {
-    dispatch({
-      type: "RESET_STORE",
-    });
-  };
-};
+    return dispatch => {
+        dispatch({
+            type: RESET_STORE
+        })
+    }
+}
 
 const toggleModal = (isShowModal) => {
-  return (dispatch) => {
-    dispatch({
-      type: "TOGGLE_MODAL",
-      isShowModal,
-    });
-  };
-};
+    return (dispatch) => {
+        dispatch({
+            type: TOGGLE_MODAL,
+            isShowModal
+        });
+    }
+}
 
-export { fetchPaymentAccounts, resetStore, toggleModal };
+export {
+    fetchPaymentAccounts,
+    resetStore,
+    toggleModal
+}
