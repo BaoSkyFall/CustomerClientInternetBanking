@@ -1,4 +1,4 @@
-import {combineReducers} from 'redux';
+import { combineReducers } from "redux";
 
 // import authReducer from './auth';
 import paymentAccountsReducer from './payment-accounts';
@@ -6,7 +6,8 @@ import paymentAccountsReducer from './payment-accounts';
 
 
 export default combineReducers({
-    // authReducer,
-    paymentAccountsReducer,
-   
-})
+  // authReducer,
+  LoginReducer,
+
+  paymentAccountsReducer,
+});
