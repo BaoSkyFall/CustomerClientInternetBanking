@@ -4,7 +4,7 @@ import {
     FETCH_PAYMENT_ACCOUNTS_FAIL,
     TOGGLE_MODAL,
     RESET_STORE
-} from '../../constants/customer/payment-accounts';
+} from '../constants/customer/payment-accounts';
 
 const initialState = {
     paymentAccounts: [],

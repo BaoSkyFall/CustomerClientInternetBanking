@@ -1,5 +1,4 @@
 import axios from 'axios';
-import queryBuilder from 'gql-query-builder';
 import {
     FETCH_PAYMENT_ACCOUNTS,
     FETCH_PAYMENT_ACCOUNTS_SUCCESS,
@@ -13,12 +12,7 @@ const fetchPaymentAccounts = (email, accessToken) => {
     return (dispatch) => {
         dispatch({ type: FETCH_PAYMENT_ACCOUNTS });
 
-        return axios.post(URL_SERVER_DEPLOY, queryBuilder({
-            type: 'query',
-            operation: 'wallets',
-            data: {email, accessToken},
-            fields: ['walletNumber', 'balance']
-        }))
+        return axios.post(URL_SERVER_DEPLOY, {})
         .then(res => {
             if (!res.data.errors) {
                 dispatch({

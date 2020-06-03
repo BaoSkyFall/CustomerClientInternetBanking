@@ -1,7 +1,7 @@
 import {combineReducers} from 'redux';
 
 // import authReducer from './auth';
-import paymentAccountsReducer from './customer/payment-accounts';
+import paymentAccountsReducer from './payment-accounts';
 
 
 
