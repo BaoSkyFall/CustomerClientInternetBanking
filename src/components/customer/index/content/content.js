@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 
 import PaymentAccounts from '../../../../containers/customer/payment-accounts';
-// import InternalTransfer from '../../../../containers/customer/internal-transfer';
-// import SetupRecipient from '../../../../containers/customer/setup-recipient';
+import InternalTransfer from '../../../../containers/customer/internal-tranfer';
+import SetupRecipient from '../../../../containers/customer/setup-recipient';
 // import TransactionHistory from '../../../../containers/customer/transaction-history';
 // import CloseWallet from '../../../../containers/customer/close-wallet';
 
@@ -20,7 +20,7 @@ export default class Content extends Component {
                 return content_layout = (
                     <React.Fragment>
                         <h2>Internal Transfer</h2>
-                        {/* <InternalTransfer /> */}
+                        <InternalTransfer />
                     </React.Fragment>
                 );
             }
@@ -28,7 +28,7 @@ export default class Content extends Component {
                 return content_layout = (
                     <React.Fragment>
                         <h2>Setup Recipient</h2>
-                        {/* <SetupRecipient /> */}
+                        <SetupRecipient />
                     </React.Fragment>
                 );
             }
