@@ -2,13 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, Button } from 'antd';
 import {
-    AppstoreOutlined,
+    WalletOutlined,
     MenuUnfoldOutlined,
     MenuFoldOutlined,
-    PieChartOutlined,
-    DesktopOutlined,
+    SwapOutlined,
+    UserSwitchOutlined,
     ContainerOutlined,
-    MailOutlined,
+    FormOutlined,
 } from '@ant-design/icons';
 import { MENUITEM } from '../../../../configs/client';
 import './menu.css';
@@ -37,20 +37,20 @@ class MenuLeft extends React.Component {
                 <Button type="primary" onClick={this.toggleCollapsed} style={{ marginBottom: 16 }}>
                     {React.createElement(this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined)}
                 </Button>
-                <Menu.Item key="1" icon={<PieChartOutlined />} >
+                <Menu.Item key="1" icon={<WalletOutlined />} >
                     <Link to={MENUITEM.PAYMENT_ACCOUNTS} >
                         <span>Dashboard</span>
                     </Link>
                 </Menu.Item>
-                <Menu.Item key="2" icon={<DesktopOutlined />}>
+                <Menu.Item key="2" icon={<SwapOutlined />}>
                     <Link to={MENUITEM.INTERNAL_TRANSFER} >
                         <span>Internal Tranfer</span>
                     </Link>          </Menu.Item>
-                <Menu.Item key="3" icon={<ContainerOutlined />}>
+                <Menu.Item key="3" icon={<UserSwitchOutlined />}>
                     <Link to={MENUITEM.SETUP_RECIPIENT} >
                         <span>Setup Recipient</span>
                     </Link>          </Menu.Item>
-                <Menu.Item key="4" icon={<ContainerOutlined />}>
+                <Menu.Item key="4" icon={<FormOutlined />}>
                     <Link to={MENUITEM.TRANSACTION_HISTORY} >
                         <span>Transaction History</span>
                     </Link>

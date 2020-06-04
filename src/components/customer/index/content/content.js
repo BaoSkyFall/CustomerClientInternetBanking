@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import PaymentAccounts from '../../../../containers/customer/payment-accounts';
 import InternalTransfer from '../../../../containers/customer/internal-tranfer';
 import SetupRecipient from '../../../../containers/customer/setup-recipient';
-// import TransactionHistory from '../../../../containers/customer/transaction-history';
+import TransactionHistory from '../../../../containers/customer/transaction-history';
 // import CloseWallet from '../../../../containers/customer/close-wallet';
 
 // import OTPEmail from '../../../../containers/customer/otp-email';
@@ -36,7 +36,7 @@ export default class Content extends Component {
                 return content_layout = (
                     <React.Fragment>
                         <h2>Transaction History</h2>
-                        {/* <TransactionHistory /> */}
+                        <TransactionHistory />
                     </React.Fragment>
                 );
             }
