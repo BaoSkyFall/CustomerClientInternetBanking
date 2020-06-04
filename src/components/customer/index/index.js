@@ -1,5 +1,5 @@
 import React from 'react';
-
+import HeaderPage from './header/header'
 import MenuLeft from './menu/menu';
 import Content from './content/content';
 import './index.css'
@@ -45,6 +45,7 @@ class Dashboard extends React.Component {
 
         return (
             <React.Fragment>
+                <HeaderPage />
                 {GirdLayout}
             </React.Fragment>
         )

@@ -7,7 +7,7 @@ import {
     MenuFoldOutlined,
     SwapOutlined,
     UserSwitchOutlined,
-    ContainerOutlined,
+    LogoutOutlined,
     FormOutlined,
 } from '@ant-design/icons';
 import { MENUITEM } from '../../../../configs/client';
@@ -55,9 +55,9 @@ class MenuLeft extends React.Component {
                         <span>Transaction History</span>
                     </Link>
                 </Menu.Item>
-                <Menu.Item key="5" icon={<ContainerOutlined />}>
+                <Menu.Item key="5" icon={<LogoutOutlined />}>
                     <Link to={MENUITEM.CLOSE_WALLET} >
-                        <span>Close Wallet</span>
+                        <span>Logout</span>
                     </Link>
                 </Menu.Item>
             </Menu>
