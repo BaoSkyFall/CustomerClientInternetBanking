@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 
 import Register from '../../register/content-register';
 import Payment from '../../payment/content-payment';
-// import Recharge from '../../recharge/recharge';
+import Recharge from '../../recharge/recharge';
 import "antd/dist/antd.css";
 // import './content.css'
 
@@ -29,9 +29,9 @@ export default class Content extends Component {
             }
             case "recharge": {
                 return content_layout = (
-                    <div></div>
+                
 
-                    // <Recharge {...this.props}/>
+                    <Recharge {...this.props}/>
                 );
             }
 

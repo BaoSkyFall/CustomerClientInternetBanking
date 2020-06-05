@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 import "antd/dist/antd.css";
+import './header.css';
 import {
-    Layout, Menu
+    Layout, Row, Col, Menu, Badge, Dropdown
 } from 'antd';
+
 
 const { Header } = Layout;
 
@@ -11,14 +13,13 @@ class HeaderPage extends Component {
         return (
             <Header className="header">
                 <div className="logo" />
-                <Menu
-                    theme="dark"
-                    mode="horizontal"
-                    defaultSelectedKeys={['3']}
-                    style={{ lineHeight: '64px' }}
-                >
-                    <Menu.Item key="3">Staff</Menu.Item>
-                </Menu>
+                <Row>
+                    <Col className="nameBank" span={3} offset={1}><h3>Bảo Bình Đạt Bank</h3></Col>
+                    <Col clasName="" span={3} offset={17} style={{ color: 'white' }}>
+                        <span style={{ marginLeft: '7px', fontSize: '18px' }}> Hello Bảo</span>
+                    </Col>
+                </Row>
+
             </Header>
         )
     }

@@ -23,10 +23,11 @@ class Staff extends Component {
 }
 
 const mapStateToProps = (state) => {
+    console.log('state:', state);
     return {
         registerState: state.accountUser,
         paymentAccount: state.paymentAccount,
-        recharge: state.recharge
+        recharge: state.rechargeReducer
     }
 }
 

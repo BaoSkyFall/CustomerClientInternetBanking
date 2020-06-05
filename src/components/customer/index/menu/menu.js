@@ -56,7 +56,7 @@ class MenuLeft extends React.Component {
                     </Link>
                 </Menu.Item>
                 <Menu.Item key="5" icon={<LogoutOutlined />}>
-                    <Link to={MENUITEM.CLOSE_WALLET} >
+                    <Link to="/" >
                         <span>Logout</span>
                     </Link>
                 </Menu.Item>

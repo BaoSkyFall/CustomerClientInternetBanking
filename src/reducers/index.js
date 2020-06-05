@@ -9,6 +9,8 @@ import authReducer from './auth';
 
 import accountUser from './staff/account-user';
 import paymentAccount from './staff/account-payment';
+import rechargeReducer from './staff/recharge';
+
 
 export default combineReducers({
   authReducer,
@@ -19,5 +21,6 @@ export default combineReducers({
   transactionHistoryReducer,
   paymentAccount,
   authReducer,
-  accountUser
+  accountUser,
+  rechargeReducer
 });
