@@ -85,6 +85,8 @@ class Recharge extends Component {
                             {...formItemLayout}
                             label="ID Wallet: "
                             name="accountNumber"
+                            type="number"
+
 
                         >
 

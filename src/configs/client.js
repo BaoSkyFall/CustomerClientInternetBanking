@@ -5,6 +5,7 @@ export const EMAIL_KEY = 'email';
 export const MENUITEM = {
     PAYMENT_ACCOUNTS: 'payment-accounts',
     INTERNAL_TRANSFER: 'internal-transfer',
+    DEBT_REMINDER: 'debt-reminder',
     SETUP_RECIPIENT: 'setup-recipient',
     TRANSACTION_HISTORY: 'transaction-history',
     CLOSE_WALLET: 'close-wallet',

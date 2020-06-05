@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Input, Card, Select, Form, Button } from 'antd';
-import {UsergroupAddOutlined} from '@ant-design/icons';
+import { UsergroupAddOutlined } from '@ant-design/icons';
 import './recipient-information.css'
 const Option = Select.Option;
 
@@ -50,7 +50,7 @@ class Recipient extends Component {
 
     render() {
 
-        const { emailRecipient, fullNameRecipient } = this.props;
+        const { emailRecipient,bankRecipient, fullNameRecipient } = this.props;
 
         return (
             <Card
@@ -80,7 +80,9 @@ class Recipient extends Component {
                         Add
                     </Button>
                 </Form.Item>
-
+                <Form.Item {...this.props.formItemLayout} label="Recipient's Bank:">
+                    <Input type='text' disabled="true" value={bankRecipient} />
+                </Form.Item>
                 <Form.Item {...this.props.formItemLayout} label="Recipient's Email:">
                     <Input type='text' disabled="true" value={emailRecipient} />
                 </Form.Item>

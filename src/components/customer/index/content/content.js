@@ -4,6 +4,8 @@ import PaymentAccounts from '../../../../containers/customer/payment-accounts';
 import InternalTransfer from '../../../../containers/customer/internal-tranfer';
 import SetupRecipient from '../../../../containers/customer/setup-recipient';
 import TransactionHistory from '../../../../containers/customer/transaction-history';
+import DebtReminder from '../../../../containers/customer/debt-reminder';
+
 // import CloseWallet from '../../../../containers/customer/close-wallet';
 
 // import OTPEmail from '../../../../containers/customer/otp-email';
@@ -14,13 +16,21 @@ import './content.css'
 export default class Content extends Component {
     render() {
         let content_layout;
-        
+
         switch (this.props.content_type) {
             case MENUITEM.INTERNAL_TRANSFER: {
                 return content_layout = (
                     <React.Fragment>
                         <h2>Internal Transfer</h2>
                         <InternalTransfer />
+                    </React.Fragment>
+                );
+            }
+            case MENUITEM.DEBT_REMINDER: {
+                return content_layout = (
+                    <React.Fragment>
+                        <h2>Debt Reminder</h2>
+                        <DebtReminder />
                     </React.Fragment>
                 );
             }

@@ -25,6 +25,7 @@ const initialState = {
     messageError: '',
     isShowModalTransfer: false,
     isLoading: false,
+    bankRecipient:'',
     emailRecipient: '',
     fullNameRecipient: ''
 };

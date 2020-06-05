@@ -9,6 +9,7 @@ import {
     UserSwitchOutlined,
     LogoutOutlined,
     FormOutlined,
+    CreditCardOutlined,
 } from '@ant-design/icons';
 import { MENUITEM } from '../../../../configs/client';
 import './menu.css';
@@ -44,18 +45,23 @@ class MenuLeft extends React.Component {
                 </Menu.Item>
                 <Menu.Item key="2" icon={<SwapOutlined />}>
                     <Link to={MENUITEM.INTERNAL_TRANSFER} >
-                        <span>Internal Tranfer</span>
+                        <span>Tranfer Monney</span>
                     </Link>          </Menu.Item>
-                <Menu.Item key="3" icon={<UserSwitchOutlined />}>
+                <Menu.Item key="3" icon={<CreditCardOutlined />
+                }>
+                    <Link to={MENUITEM.DEBT_REMINDER} >
+                        <span>Debt Reminder</span>
+                    </Link>          </Menu.Item>
+                <Menu.Item key="4" icon={<UserSwitchOutlined />}>
                     <Link to={MENUITEM.SETUP_RECIPIENT} >
                         <span>Setup Recipient</span>
                     </Link>          </Menu.Item>
-                <Menu.Item key="4" icon={<FormOutlined />}>
+                <Menu.Item key="5" icon={<FormOutlined />}>
                     <Link to={MENUITEM.TRANSACTION_HISTORY} >
                         <span>Transaction History</span>
                     </Link>
                 </Menu.Item>
-                <Menu.Item key="5" icon={<LogoutOutlined />}>
+                <Menu.Item key="6" icon={<LogoutOutlined />}>
                     <Link to="/" >
                         <span>Logout</span>
                     </Link>
