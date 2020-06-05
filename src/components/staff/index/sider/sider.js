@@ -4,7 +4,7 @@ import "antd/dist/antd.css";
 import {
     Layout, Menu
 } from 'antd';
-import {UserOutlined } from '@ant-design/icons'
+import {UserOutlined,UsergroupAddOutlined,BookOutlined,TransactionOutlined } from '@ant-design/icons'
 
 const { SubMenu } = Menu;
 const {  Sider } = Layout;
@@ -21,9 +21,9 @@ class SiderPage extends Component {
                     style={{ height: '100%', borderRight: 0 }}
                 >
                     <SubMenu key="sub1" title={<span><UserOutlined />Staff</span>}>
-                        <Menu.Item key="1"><Link to="register">New User Account</Link></Menu.Item>
-                        <Menu.Item key="2"><Link to="payment">Open New Wallet</Link></Menu.Item>
-                        <Menu.Item key="3"><Link to="recharge">Recharge</Link></Menu.Item>
+                        <Menu.Item key="1" icon={<UsergroupAddOutlined />}><Link to="register">New Account</Link></Menu.Item>
+                        <Menu.Item key="2" icon={<BookOutlined />}><Link to="payment">Get User Info</Link></Menu.Item>
+                        <Menu.Item key="3" icon={<TransactionOutlined />}><Link to="recharge">Recharge</Link></Menu.Item>
                     </SubMenu>
                 </Menu>
             </Sider>

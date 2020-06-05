@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-// import Register from '../../register/content-register';
+import Register from '../../register/content-register';
 import Payment from '../../payment/content-payment';
 // import Recharge from '../../recharge/recharge';
 import "antd/dist/antd.css";
@@ -16,10 +16,9 @@ export default class Content extends Component {
         let content_layout;
 
         switch (this.props.content_type) {
-            case "rgister": {
+            case "register": {
                 return content_layout = (
-                    <div></div>
-                    // <Register {...this.props} />
+                    <Register {...this.props} />
                 );
             }
             case "payment": {
