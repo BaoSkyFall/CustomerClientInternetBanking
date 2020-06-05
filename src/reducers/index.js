@@ -6,6 +6,7 @@ import internalTransferReducer from './customer/internal-tranfer';
 import transactionHistoryReducer from './customer/transaction-history';
 import authReducer from './auth';
 
+import paymentAccount from './staff/account-payment';
 
 export default combineReducers({
   authReducer,
@@ -14,5 +15,6 @@ export default combineReducers({
   paymentAccountsReducer,
   internalTransferReducer,
   transactionHistoryReducer,
+  paymentAccount,
   authReducer
 });
