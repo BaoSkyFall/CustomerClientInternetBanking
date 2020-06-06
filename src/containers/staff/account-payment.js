@@ -5,10 +5,10 @@ import { actSearchUserRequest, actRegisterPaymentRequest } from '../../actions/s
 
 class PaymentContainer extends Component {
     constructor(props) {
-      super(props)
-    
+        super(props)
+
     }
-    
+
 
     render() {
         return (
@@ -21,7 +21,21 @@ class PaymentContainer extends Component {
 
 const mapStateToProps = state => {
     return {
-        paymentAccount: state.paymentAccount
+        isSearchFailed: state.paymentAccount.isSearchFailed,
+        isSearchLoading: state.paymentAccount.isSearchLoading,
+        isSearchSuccess: state.paymentAccount.isSearchSuccess,
+        isSuccess: state.paymentAccount.isSuccess,
+        isFailed: state.paymentAccount.isFailed,
+        isLoading: state.paymentAccount.isLoading,
+        username: state.paymentAccount.username,
+        name: state.paymentAccount.name,
+        email: state.paymentAccount.email,
+        phone: state.paymentAccount.phone,
+        indenityNumber: state.paymentAccount.indenityNumber,
+        dob: state.paymentAccount.dob,
+        walletNumber: state.paymentAccount.walletNumber,
+        balance: state.paymentAccount.balance,
+        messageError: state.paymentAccount.messageError,
     }
 }
 

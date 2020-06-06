@@ -55,10 +55,13 @@ class FormPayment extends React.Component {
             defaultSortOrder: 'descend',
         }];
         this.state = {
-
         }
     }
-
+    componentDidUpdate(){
+        // const {isSearchSuccess} = this.props.paymentAccount
+        // if(isSearchSuccess)
+        // this.setState({data: this.props.paymentAccount})
+    }
     componentDidMount() {
         const accessToken = localStorage.getItem(ACCESS_TOKEN_KEY) || '';
         // fetch(`${URL_SERVER}/user/me`, {
@@ -86,7 +89,7 @@ class FormPayment extends React.Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        this.props.form.validateFields((err, values) => {
+        this.props.form.validateFields((err, defaultValues) => {
             if (!err) {
                 var dt = {
                     "email": this.props.paymentAccount.email,
@@ -99,7 +102,7 @@ class FormPayment extends React.Component {
 
 
     showAlertRegister = () => {
-        var { isSuccess, isFailed, isLoading, walletNumber, massageError } = this.props.paymentAccount;
+        var { isSuccess, isFailed, isLoading, walletNumber, messageError } = this.props.paymentAccount;
         if (isSuccess) {
             message.success(`Your new wallet number is: ${walletNumber}`, 8);
             this.props.resetStatusSearch();
@@ -130,17 +133,17 @@ class FormPayment extends React.Component {
         }
     }
 
-    validateToNextPassword = (rule, value, callback) => {
+    validateToNextPassword = (rule, defaultValue, callback) => {
         const form = this.props.form;
-        if (value && this.state.confirmDirty) {
+        if (defaultValue && this.state.confirmDirty) {
             form.validateFields(['confirm'], { force: true });
         }
         callback();
     }
 
-    compareToFirstPassword = (rule, value, callback) => {
+    compareToFirstPassword = (rule, defaultValue, callback) => {
         const form = this.props.form;
-        if (value && value !== form.getFieldValue('password')) {
+        if (defaultValue && defaultValue !== form.getFielddefaultValue('password')) {
             callback('Two passwords that you enter is inconsistent!');
         } else {
             callback();
@@ -149,7 +152,10 @@ class FormPayment extends React.Component {
 
 
     render() {
-        var { walletNumber, fullName, birthday, phone, indenityNumber, balance, email } = this.props.paymentAccount;
+        var { walletNumber, name, dob, phone, indenityNumber, balance, email } = this.props.paymentAccount;
+       var {data} = this.state;
+        console.log('walletNumber:', walletNumber);
+        console.log('name:', name)
         const formItemLayout = {
             labelCol: {
                 xs: { span: 24 },
@@ -170,7 +176,7 @@ class FormPayment extends React.Component {
                             placeholder="Input username"
                             enterButton="Search"
                             size="large"
-                            onSearch={(value) => { this.props.searchUser(value, accessToken) }}
+                            onSearch={(defaultValue) => { this.props.searchUser(defaultValue, accessToken) }}
                         />
                     </Col>
                 </Row>
@@ -181,14 +187,13 @@ class FormPayment extends React.Component {
                 </Row>
                 <hr />
                 <Row className="displaySearch">
-                    <Form onSubmit={this.handleSubmit} className="form-signin">
+                    <Form onSubmit={this.handleSubmit} initialValues={data} className="form-signin">
 
                         <FormItem
                             {...formItemLayout}
                             label="Wallet Number"
                             name="walletNumber"
                         >
-
                             <Input type="text" defaultValue={walletNumber} disabled={true} />
 
                         </FormItem>
@@ -206,10 +211,10 @@ class FormPayment extends React.Component {
                         <FormItem
                             {...formItemLayout}
                             label="Full Name"
-                            name="fullname"
+                            name="name"
                         >
 
-                            <Input type="text" defaultValue={fullName} disabled={true} />
+                            <Input type="text" defaultValue={name} disabled={true} />
 
                         </FormItem>
 
@@ -252,10 +257,10 @@ class FormPayment extends React.Component {
                                 <FormItem
                                     {...formItemLayout}
                                     label="Birth Date"
-                                    name="date"
+                                    name="dob"
                                 >
 
-                                    <Input type="text" defaultValue={birthday} disabled={true} className="dateInput" />
+                                    <Input type="text" defaultValue={dob} disabled={true} className="dateInput" />
 
                                 </FormItem>
                             </Col>

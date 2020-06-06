@@ -65,14 +65,15 @@ export const actRegisterPayment = () => {
 //     }
 // }
 
-export const actSearchUserRequest = (email, accessToken) => {
+export const actSearchUserRequest = (username, accessToken) => {
     return (dispatch) => {
         dispatch(actSearchUserLoading());
-        return callApi(`user?email=${email}`, 'GET', null, {x_accessToken: accessToken})
+        return callApi(`api/staff/getInfoUserByUsername/${username}`, 'GET', null, {x_accessToken: accessToken})
             .then(res => {
                 if (res.status === 200) {
                     console.log(res.data.data)
-                    var dt = { ...res.data.data };
+                    var dt = res.data.data[0];
+                    console.log('dt:', dt)
                     dispatch(actSearchUser(dt));
                 }else{
                     dispatch(actSearchUserFail());

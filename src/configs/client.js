@@ -8,6 +8,7 @@ export const MENUITEM = {
     DEBT_REMINDER: 'debt-reminder',
     SETUP_RECIPIENT: 'setup-recipient',
     TRANSACTION_HISTORY: 'transaction-history',
+    SAVING: 'transaction-history',
     CLOSE_WALLET: 'close-wallet',
 };
 

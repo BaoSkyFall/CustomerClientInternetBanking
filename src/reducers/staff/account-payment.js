@@ -3,24 +3,43 @@ import * as Types from '../../constants/ActionTypes';
 var initialState = {
     isSearchFailed: false,
     isSearchLoading: false,
+    isSearchSuccess:false,
     isSuccess: false,
     isFailed: false,
     isLoading: false,
-    walletNumber:'',
+    username:'',
+    name:'',
     email:'',
+    phone:'',
     indenityNumber:'',
+    dob:'',
+    walletNumber:'',
     balance:'',
-    massageError: ''
+    messageError: ''
 }
 
 const paymentAccount = (state = initialState, action) => {
     switch (action.type) {
         case Types.SEARCH_USERNAME:
-            state = action.user
+            console.log('action:', action)
             return {
                 ...state,
                 isSearchLoading: false,
-                isSearchFailed: false
+                isSearchFailed: false,
+                isSearchSuccess:true,
+                walletNumber: action.user.walletNumber,
+                email: action.user.email,
+                username: action.user.username,
+                name: action.user.name,
+                email: action.user.email,
+                phone: action.user.phone,
+                indenityNumber: action.user.indenityNumber,
+                dob: action.user.dob,
+                walletNumber: action.user.walletNumber,
+                balance: action.user.balance,
+
+
+
             };
         case Types.SEARCH_USERNAME_FAIL:
             return {
@@ -59,7 +78,7 @@ const paymentAccount = (state = initialState, action) => {
                 ...state,
                 isFailed: true,
                 isLoading: false,
-                massageError: action.massageError
+                messageError: action.messageError
             }
         default: return { ...state };
     }

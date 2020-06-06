@@ -56,9 +56,9 @@ const doSignIn = (infoUser) => {
             type: DO_SIGNIN
         })
 
-        console.log(infoUser);
+        console.log('infoUser:', infoUser)
 
-        fetch(`${URL_SERVER}/login`, {
+        fetch(`${URL_SERVER}/api/auth/login`, {
             method: 'POST',
             headers: new Headers({
                 'Content-Type': 'application/json'
@@ -67,7 +67,7 @@ const doSignIn = (infoUser) => {
         })
         .then(res => res.json())
         .then(res => {
-            if (res.status === 200) {
+            if (res.returnCode === 1) {
                 localStorage.setItem(ACCESS_TOKEN_KEY, res.data.accessToken);
                 localStorage.setItem(REFRESH_TOKEN_KEY, res.data.refreshToken);
 
@@ -102,7 +102,7 @@ const verifyAccessToken = (accessToken) => {
             if (res.status === 200) {
                 localStorage.setItem(EMAIL_KEY, res.data.email);
                 localStorage.setItem('role', res.data.role);
-
+                
                 dispatch({
                     type: VERIFY_ACCESSTOKEN_SUCCESS,
                     email: res.data.email,

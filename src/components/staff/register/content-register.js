@@ -3,8 +3,9 @@ import { Redirect } from 'react-router-dom';
 import "./content-register.css";
 
 import {
-    Form, Input, Button, Spin, Col, Row, DatePicker, Radio, message, Select, Card
+    Form, Input, Button, Spin, notification, Row, DatePicker, Radio, message, Select, Card
 } from 'antd';
+import { CheckCircleOutlined,CloseOutlined } from '@ant-design/icons';
 import "antd/dist/antd.css";
 import { URL_SERVER } from '../../../configs/server';
 import { ACCESS_TOKEN_KEY, EMAIL_KEY } from '../../../configs/client';
@@ -46,35 +47,23 @@ class FormRegister extends React.Component {
         // })
     }
 
-    handleSubmit = (e) => {
-        e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                var data = {
-                    fullName: values.fullname,
-                    birthday: values.date.format('YYYY-MM-DD'),
-                    phone: values.phone,
-                    personalNumber: values.personalIdNumber,
-                    password: values.password,
-                    email: values.email,
-                    prefix: values.prefix,
-                    address: ""
-                };
-                var accessToken = window.localStorage.getItem('accesstoken')
-                console.log(accessToken);
-                this.props.onRegister(data, accessToken);
-            }
-        });
-    }
+
 
     showAlert = () => {
-        var { isSuccess, isFailed, isLoading, massageError } = this.props.registerState;
+        var { isSuccess, isFailed, isLoading, messageError } = this.props.registerState;
         if (isSuccess) {
-            message.success('Register Success!', 3)
-            this.props.resetStatus();
+            notification.open({
+                message: `Create Customer Success `,
+                icon: <CheckCircleOutlined style={{ color: 'green' }} />,
+                description: 'Your customer created has been stored in database'
+            })
         } else if (isFailed) {
-            message.error(`${massageError}`)
-            this.props.resetStatus();
+            notification.open({
+                message: `Create Customer Fail `,
+                icon: <CloseOutlined  style={{ color: 'red' }} />,
+                description: 'Please check your input is valid'
+            })
+                this.props.resetStatus();
         } else if (isLoading) {
             return (
                 <Row className="progress">
@@ -83,7 +72,13 @@ class FormRegister extends React.Component {
             );
         }
     }
-
+    onFinish = (values) => {
+        values.dob = values.dob.format('YYYY-MM-DD');
+        delete values.confirm;
+        values.role = 1;
+        let accessToken = localStorage.getItem(ACCESS_TOKEN_KEY);
+        this.props.onRegister(values, accessToken);
+    }
     render() {
 
         const formItemLayout = {
@@ -104,7 +99,9 @@ class FormRegister extends React.Component {
 
         return (
             <React.Fragment>
-                <Form onSubmit={this.handleSubmit} className="cardRegister">
+                <Form
+                    initialValues={{ indentity_number: '025845999', phone: '0909909999', name: 'Phan Hải Bình', username: 'phanhaibinh', password: 'phanhaibinh', email: 'phanhaibinh@gmail.com', confirm: 'phanhaibinh' }}
+                    onFinish={this.onFinish} className="cardRegister">
                     <Card
                         title="Personal Infomation"
                         style={{ width: "90%" }}
@@ -114,7 +111,7 @@ class FormRegister extends React.Component {
                             className="itemForm"
                             {...formItemLayout}
                             label="Full Name"
-                            name="fullname"
+                            name="name"
                             rules={[
                                 {
                                     type: 'string', message: 'The input is not valid ',
@@ -123,7 +120,7 @@ class FormRegister extends React.Component {
                                 }]}
                         >
 
-                            <Input name="fullname" type="text" style={{ width: "50%" }}
+                            <Input name="name" type="text" style={{ width: "50%" }}
                             />
 
                         </FormItem>
@@ -131,7 +128,7 @@ class FormRegister extends React.Component {
                             className="itemForm"
                             label="Birth Date"
                             {...formItemLayout}
-                            name="date"
+                            name="dob"
                             rules={[
                                 {
                                     required: true, message: 'Please input your Birthday',
@@ -140,6 +137,7 @@ class FormRegister extends React.Component {
                         >
 
                             <DatePicker
+                                format='DD-MM-YYYY'
                                 className="aaa"
                             />
 
@@ -152,7 +150,7 @@ class FormRegister extends React.Component {
                             rules={[{ required: true, message: 'Please input your phone number!' }]}
                         >
 
-                            <Input addonBefore="+84" />
+                            <Input type="number" addonBefore="+84" />
 
                         </FormItem>
 
@@ -160,12 +158,12 @@ class FormRegister extends React.Component {
                             className="itemForm"
                             label="Indentity Number"
                             {...formItemLayout}
-                            name="personalIdNumber"
+                            name="indentity_number"
                             rules={[{
                                 required: true, message: 'Please input your Identity Number',
                             }]}
                         >
-                            <Input  name="indentityNumber"/>
+                            <Input type="number" name="indentity_number" />
 
 
                         </FormItem>
@@ -192,8 +190,24 @@ class FormRegister extends React.Component {
                         </FormItem>
                         <FormItem
                             {...formItemLayout}
+                            label="Username"
+                            name="username"
+                            rules={[{
+                                type: 'string', message: 'The input is not valid Username!',
+                            }, {
+                                required: true, message: 'Please input your Username!',
+                            }]}
+
+                        >
+
+                            <Input name="email" />
+
+                        </FormItem>
+                        <FormItem
+                            {...formItemLayout}
                             label="Password"
                             name="password"
+
                             rules={[{
                                 required: true, message: 'Please input your password!',
                             }, {
@@ -209,11 +223,22 @@ class FormRegister extends React.Component {
                             {...formItemLayout}
                             label="Confirm Password"
                             name="confirm"
-                            rules={[{
-                                required: true, message: 'Please confirm your password!',
-                            }, {
-                                validator: this.compareToFirstPassword,
-                            }]}
+                            dependencies={['password']}
+
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please confirm your password!',
+                                },
+                                ({ getFieldValue }) => ({
+                                    validator(rule, value) {
+                                        if (!value || getFieldValue('password') === value) {
+                                            return Promise.resolve();
+                                        }
+                                        return Promise.reject('The two passwords that you entered do not match!');
+                                    },
+                                }),
+                            ]}
                         >
 
                             <Input type="password" onBlur={this.handleConfirmBlur} />

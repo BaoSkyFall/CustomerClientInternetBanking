@@ -11,6 +11,8 @@ import {
     ADD_DEBT_REMINDER,
     ADD_DEBT_REMINDER_SUCCESS,
     ADD_DEBT_REMINDER_FAIL,
+    SHOW_ADD_MODAL,
+    HANDLE_CANCEL_MODAL
 
 } from '../../constants/customer/debt-reminder';
 const initialState = {
@@ -20,6 +22,9 @@ const initialState = {
     messageSuccess: '',
     messageError: '',
     isLoading: false,
+    visible: false,
+    confirmLoading: false,
+    debtorModal: null,
 
 };
 export default function debtReminderReducer(state = initialState, action) {
@@ -110,6 +115,19 @@ export default function debtReminderReducer(state = initialState, action) {
                 messageError: action.messageError,
                 isLoading: false,
 
+            }
+        }
+        case SHOW_ADD_MODAL: {
+            return {
+                ...state,
+                visible:true
+
+            }
+        }
+        case HANDLE_CANCEL_MODAL:{
+            return {
+                ...state,
+                visible:false
             }
         }
         default:

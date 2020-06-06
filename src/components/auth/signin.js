@@ -7,12 +7,37 @@ import { KeyOutlined, UserOutlined } from '@ant-design/icons';
 import { ACCESS_TOKEN_KEY, EMAIL_KEY } from '../../configs/client';
 import './styles/signin.css';
 import GoogleRecaptcha from './captcha';
-
+import jwt from 'jwt-decode';
 const FormItem = Form.Item;
 class SignInForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isCheckGoogleCaptcha: false
+        }
+        this.onFinish = this.onFinish.bind(this);
+        this.onFinishFail = this.onFinishFail.bind(this);
 
-    state = {
-        isCheckGoogleCaptcha: false
+    }
+    componentDidMount(){
+
+    }
+    componentDidUpdate() {
+        const { signinSuccess } = this.props;
+        if (signinSuccess) {
+            let token = localStorage.getItem(ACCESS_TOKEN_KEY);
+            var decoded = jwt(token);
+            console.log('decoded:', decoded)
+            if (decoded.role > 1) {
+                window.location.href = '/staff/register'
+
+            }
+            else {
+                window.location.href = '/dashboard/payment-accounts'
+
+            }
+
+        }
     }
 
     handleSubmit = (e) => {
@@ -23,7 +48,15 @@ class SignInForm extends React.Component {
             }
         });
     }
+    onFinish = (values) => {
+        console.log('values:', values);
 
+        const { handleSignIn } = this.props;
+        handleSignIn(values);
+    }
+    onFinishFail = (err) => {
+        console.log('err:', err);
+    }
     render() {
         const email = localStorage.getItem(EMAIL_KEY) || '';
         const role = localStorage.getItem('role') || '';
@@ -63,34 +96,38 @@ class SignInForm extends React.Component {
                 )}
 
                 <br />
-                <FormItem name="email" rules={[{
-                    type: 'email', message: 'The input is not valid E-mail!',
-                }, {
-                    required: true, message: 'Please input your E-mail!',
-                }]}>
+                <Form
+                    initialValues={{ username: 'baoit128', password: 'baoit128',something:'1234' }}
+                    onFinish={this.onFinish}
+                    onFinishFail={this.onFinishFail}
+                >
+                    <FormItem name="username" rules={[
+                        {
+                            required: true, message: 'Please input your Username!',
+                        }]}>
 
 
-                    <Input prefix={<UserOutlined style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Email" />
-                </FormItem>
-                <FormItem name="password" rules={[{ required: true, message: 'Please input your Password!' }]}>
+                        <Input prefix={<UserOutlined style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Username" />
+                    </FormItem>
+                    <FormItem name="password" rules={[{ required: true, message: 'Please input your Password!' }]}>
 
-                    <Input prefix={<KeyOutlined style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="Password" />
-                </FormItem>
+                        <Input prefix={<KeyOutlined style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="Password" />
+                    </FormItem>
 
-                <FormItem name="captcha" rules={[{ required: true, message: 'Please select google recaptcha!' }]}>
+                    {/* <FormItem name="captcha" rules={[{ required: true, message: 'Please select google recaptcha!' }]}>
 
-                    <GoogleRecaptcha />
+                        <GoogleRecaptcha />
 
-                </FormItem>
-                <FormItem name="remember">
+                    </FormItem> */}
+                    <FormItem >
 
-                    <Checkbox>Remember me</Checkbox>
 
-                    <a className="form-signin-forgot" href="">Forgot password</a>
-                    <Button type="primary" htmlType="submit" className="form-signin-button">
-                        Sign In
+                        <a className="form-signin-forgot" href="">Forgot password</a>
+                        <Button type="primary" htmlType="submit" className="form-signin-button">
+                            Sign In
                     </Button>
-                </FormItem>
+                    </FormItem>
+                </Form>
             </React.Fragment>
         );
 

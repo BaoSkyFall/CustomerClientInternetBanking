@@ -1,6 +1,6 @@
 import React from 'react';
-import { Table, notification, Spin, Card, Row, Col,Button } from 'antd';
-import {PlusSquareOutlined} from '@ant-design/icons';
+import { Table, notification, Spin, Card, Row, Col, Checkbox, Button, Modal, Form, Input } from 'antd';
+import { PlusSquareOutlined } from '@ant-design/icons';
 import { Redirect } from 'react-router-dom';
 
 import './debt-reminder.css';
@@ -75,10 +75,18 @@ class DebtReminder extends React.Component {
         }];
         this.state = {
             accessToken: localStorage.getItem(ACCESS_TOKEN_KEY) || '',
-            email: localStorage.getItem(EMAIL_KEY) || ''
+            email: localStorage.getItem(EMAIL_KEY) || '',
+            visible: false,
+            confirmLoading: false,
         }
     }
+    onFinish = values => {
+        console.log('Success:', values);
+    };
 
+    onFinishFailed = errorInfo => {
+        console.log('Failed:', errorInfo);
+    };
     componentDidMount() {
         const { accessToken, email } = this.state;
         // this.props.fetchTransactionHistory(email, accessToken);
@@ -106,8 +114,14 @@ class DebtReminder extends React.Component {
     }
 
     render() {
-        const { isLoading, debtReminders, messageError } = this.props;
-        console.log("debt reminder: ", this.props)
+        const { isLoading, debtReminders, messageError, showAddModal
+            , handleCancelModal } = this.props;
+        const { visible, confirmLoading } = this.state;
+        const layout = {
+            labelCol: { span: 8 },
+            wrapperCol: { span: 16 },
+        };
+        console.log('visible:', visible)
         if (messageError === 'AccessToken is not valid') {
             // this.props.resetStore();
             return (<Redirect to={{
@@ -128,7 +142,7 @@ class DebtReminder extends React.Component {
                             <Button
                                 type="primary"
                                 icon={<PlusSquareOutlined />}
-                                onClick={()=>{}}>Add Debt Reminder</Button>
+                                onClick={() => { this.setState({ visible: true }) }}>Add Debt Reminder</Button>
                         </Col>
                     </Row>
                     <Table
@@ -149,6 +163,65 @@ class DebtReminder extends React.Component {
                         scroll={{ y: '60vh' }}
                         bordered />
                 </Card>
+                <Modal
+                    title="Add Debt Reminder"
+                    visible={visible}
+                    onOk={() => {
+                        this.setState({
+                            confirmLoading: true,
+                        });
+                        setTimeout(() => {
+                            this.setState({
+                                visible: false,
+                                confirmLoading: false,
+                            });
+                        }, 2000);
+                    }}
+                    confirmLoading={confirmLoading}
+                    onCancel={() => { this.setState({ visible: false }) }}
+                >
+                    <Form
+                        {...layout}
+                        name="basic"
+                        initialValues={{ remember: true }}
+                        onFinish={this.onFinish()}
+                        onFinishFailed={this.onFinishFailed()}
+                    >
+                        <Form.Item
+                            label="Debtor ID Wallet"
+                            name="debtor"
+                            rules={[{ required: true, message: 'Please input your Debtor ID Wallet!' }]}
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            label="Debtor"
+                            name="name"
+                            
+                        >
+                            <Input disabled={true}/>
+                        </Form.Item>
+                        <Form.Item
+                            label="Amount"
+                            name="amount"
+                            rules={[{ required: true, message: 'Please input your Amount!' }]}
+                        >
+                            <Input />
+                        </Form.Item>
+                        <Form.Item
+                            label="Description"
+                            name="description"
+                            rules={[{ required: true, message: 'Please input your Description!' }]}
+
+                        >
+                            <Input.TextArea autoSize={{ minRows: 3, maxRows: 15 }}
+                            />
+                        </Form.Item>
+
+
+                      
+                    </Form>
+                </Modal>
 
             </React.Fragment>
         )
