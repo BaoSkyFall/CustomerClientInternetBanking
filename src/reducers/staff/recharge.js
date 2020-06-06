@@ -5,17 +5,25 @@ var initialState = {
     isSearchIdFail: false,
     isUpdateFail: false,
     isUpdateSuccess: false,
-    isUpdateLoading: false
+    isUpdateLoading: false,
+    name: '',
+    identityNumber: '',
+    balance: '',
+    walletNumber:'',
 }
 
 const rechargeReducer = (state = initialState, action) => {
     switch (action.type) {
         case Types.SEARCH_ACCOUNT_PAYMENT:
-            state = action.account
             return {
                 ...state,
                 isSearchIdSuccess: true,
                 isSearchIdFail: false,
+                name: action.account.name,
+                identityNumber: action.account.identityNumber,
+                balance: action.account.balance,
+                walletNumber: action.account.walletNumber,
+                    
             };
         case Types.RESET_ACCOUNT_PAYMENT_STATUS:
             return {

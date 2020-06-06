@@ -1,11 +1,15 @@
 import React, { Component } from 'react'
 import "antd/dist/antd.css";
 import './recharge.css'
-import { Card, Row, Button, Form, Input, InputNumber, message, Spin } from 'antd';
+import { Card, Col, Row, Button, Form, Input, InputNumber, message, Spin } from 'antd';
 import { URL_SERVER } from '../../../configs/server';
 import { ACCESS_TOKEN_KEY, EMAIL_KEY } from '../../../configs/client';
 const FormItem = Form.Item;
+const Search = Input.Search;
+
 class Recharge extends Component {
+    formRef = React.createRef();
+
     constructor(props) {
         super(props)
 
@@ -44,7 +48,11 @@ class Recharge extends Component {
             this.props.updateBalance(dt, accessToken)
         });
     }
+    componentDidUpdate() {
+        var data = this.props.recharge
+        this.formRef.current.setFieldsValue(data)
 
+    }
     showAlert = () => {
         console.log("recharge props: ", this.props)
         var { isUpdateFail, isUpdateSuccess, isUpdateLoading } = this.props.recharge;
@@ -74,73 +82,110 @@ class Recharge extends Component {
                 sm: { span: 16 },
             },
         };
-
+        var accessToken = window.localStorage.getItem('accesstoken');
+        var data = this.props.recharge;
         return (
-            <Form onSubmit={this.handleSubmit} className="submitRecharge">
-                <div style={{ background: '#ECECEC', padding: '30px' }}>
+            <div>
+                <Card title="Recharge" bordered={false} style={{ width: "100%" }}>
 
-                    <Card title="Recharge" bordered={false} style={{ width: "100%" }}>
+                    <Row className="Search">
+                        <Col offset={8} span={8}>
 
-                        <FormItem
-                            {...formItemLayout}
-                            label="ID Wallet: "
-                            name="accountNumber"
-                            type="number"
-
-
-                        >
-
-                            <Input type='number' />
-
-                        </FormItem>
-                        <FormItem
-                            {...formItemLayout}
-                            label="Full Name"
-                            name="fullname"
-                        >
-
-                            <Input type="text" defaultValue={""} disabled={true} />
-
-                        </FormItem>
-                        <FormItem
-                            {...formItemLayout}
-                            label="Identity Number"
-                            name="indenityNumber"
-
-                        >
-
-
-                            <Input type="text" defaultValue={""} disabled={true} />
-
-                        </FormItem>
-                        <FormItem
-                            {...formItemLayout}
-                            label="Amount"
-                            name="Amount"
-                        >
-
-
-                            <InputNumber className="inputAmount"
-                                onChange={(e) => { }}
-                                formatter={value => `đ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                parser={value => value.replace(/\đ\s?|(,*)/g, '')}
+                            <Search
+                                placeholder="Input Wallet ID"
+                                enterButton="Search"
+                                size="large"
+                                // value="phanhaibinh"
+                                onSearch={(defaultValue) => { this.props.searchAccount(defaultValue, accessToken) }}
                             />
+                        </Col>
+                    </Row>
 
-                        </FormItem>
-                        {this.showAlert()}
-                        <Row >
-                            <FormItem>
-                                <Button className="buttonRegister"
-                                    type="primary" htmlType="submit"
-                                >
-                                    ADD MONEY
-                                </Button>
+                    <Form
+                        ref={this.formRef}
+
+                        onSubmit={this.handleSubmit} className="submitRecharge">
+                        <div style={{ background: '#ECECEC', padding: '30px' }}>
+
+
+                            <FormItem
+                                {...formItemLayout}
+                                label="ID Wallet: "
+                                name="walletNumber"
+                                type="walletNumber"
+
+
+                            >
+                                <Input type="text" defaultValue={""} disabled={true} />
+
+
+
                             </FormItem>
-                        </Row>
+                            <FormItem
+                                {...formItemLayout}
+                                label="Full Name"
+                                name="name"
+                            >
 
-                    </Card>
-                </div>
-            </Form >
+                                <Input type="text" defaultValue={""} disabled={true} />
+
+                            </FormItem>
+                            <FormItem
+                                {...formItemLayout}
+                                label="Identity Number"
+                                name="identityNumber"
+
+                            >
+
+
+                                <Input type="text" defaultValue={""} disabled={true} />
+
+                            </FormItem>
+                            <FormItem
+                                {...formItemLayout}
+                                label="Balance"
+                                name="balance"
+
+                            >
+
+
+                                <InputNumber className="inputAmount"
+                                    disabled={true}
+                                    onChange={(e) => { }}
+                                    formatter={value => `đ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                    parser={value => value.replace(/\đ\s?|(,*)/g, '')}
+                                />
+                            </FormItem>
+                            <FormItem
+                                {...formItemLayout}
+                                label="Amount"
+                                name="Amount"
+                            >
+
+
+                                <InputNumber className="inputAmount"
+                                    onChange={(e) => { }}
+                                    formatter={value => `đ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                    parser={value => value.replace(/\đ\s?|(,*)/g, '')}
+                                />
+
+                            </FormItem>
+                            {this.showAlert()}
+                            <Row >
+                                <FormItem>
+                                    <Button className="buttonRegister"
+                                        type="primary" htmlType="submit"
+                                    >
+                                        ADD MONEY
+                                </Button>
+                                </FormItem>
+                            </Row>
+
+                        </div>
+                    </Form >
+                </Card>
+
+            </div>
         )
     }
 }

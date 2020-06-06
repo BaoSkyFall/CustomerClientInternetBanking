@@ -22,6 +22,7 @@ const paymentAccount = (state = initialState, action) => {
     switch (action.type) {
         case Types.SEARCH_USERNAME:
             console.log('action:', action)
+            
             return {
                 ...state,
                 isSearchLoading: false,

@@ -87,7 +87,10 @@
 .contentPage button.ant-btn.ant-input-search-button.ant-btn-primary.ant-btn-lg {
     width: 105%;
 }
-
+.contentPage .displaySearch input
+{
+    color:black
+}
 .contentPage .ant-message {
     margin-left: 7%;
 }

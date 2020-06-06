@@ -26,7 +26,10 @@
 .inputP input#phone {
     width: 43%;
 }
-
+.ant-card-body .ant-form-item input
+{
+    color:black
+}
 .spn{
 margin-left: -12%;
 }

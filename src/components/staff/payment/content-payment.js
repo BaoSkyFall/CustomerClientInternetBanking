@@ -1,20 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './content-payment.css';
 
 import {
-    Form, Input, Table, Col, Row, message, Spin
+    Form, Input, Table, Col, Row, message, Spin, InputNumber
 } from 'antd';
+import { FormInstance } from 'antd/lib/form';
+
 import "antd/dist/antd.css";
 import { ACCESS_TOKEN_KEY, EMAIL_KEY } from '../../../configs/client';
 import { URL_SERVER } from '../../../configs/server';
 import { formatTransaction } from '../../../ultis/transaction';
+import { formatDate } from '../../../ultis/dateFormat';
+
+import * as moment from 'moment';
+
 const FormItem = Form.Item;
 const Search = Input.Search;
 
 
 
 class FormPayment extends React.Component {
+    formRef = React.createRef();
     constructor(props) {
         super(props)
         this.columns = [{
@@ -55,15 +62,22 @@ class FormPayment extends React.Component {
             defaultSortOrder: 'descend',
         }];
         this.state = {
+            testValue: ''
         }
     }
-    componentDidUpdate(){
-        // const {isSearchSuccess} = this.props.paymentAccount
-        // if(isSearchSuccess)
-        // this.setState({data: this.props.paymentAccount})
+
+    componentDidUpdate() {
+        console.log('formRef:', this.formRef.current)
+        let data = this.props.paymentAccount;
+        data.dob = formatDate(data.dob, 'DD-MM-YYYY');
+        this.formRef.current.setFieldsValue(data)
+    }
+    componentWillUnmount() {
+
     }
     componentDidMount() {
         const accessToken = localStorage.getItem(ACCESS_TOKEN_KEY) || '';
+
         // fetch(`${URL_SERVER}/user/me`, {
         //     headers: {
         //         x_accesstoken: accessToken
@@ -153,9 +167,9 @@ class FormPayment extends React.Component {
 
     render() {
         var { walletNumber, name, dob, phone, indenityNumber, balance, email } = this.props.paymentAccount;
-       var {data} = this.state;
+        var data = this.props.paymentAccount;
         console.log('walletNumber:', walletNumber);
-        console.log('name:', name)
+        console.log('data:', data)
         const formItemLayout = {
             labelCol: {
                 xs: { span: 24 },
@@ -166,6 +180,8 @@ class FormPayment extends React.Component {
                 sm: { span: 16 },
             },
         };
+
+        const fields = ['walletNumber,name,dob,phone,email,balance,indentiyNumber']
         var accessToken = window.localStorage.getItem('accesstoken');
         return (
             <div>
@@ -176,6 +192,7 @@ class FormPayment extends React.Component {
                             placeholder="Input username"
                             enterButton="Search"
                             size="large"
+                            // value="phanhaibinh"
                             onSearch={(defaultValue) => { this.props.searchUser(defaultValue, accessToken) }}
                         />
                     </Col>
@@ -187,14 +204,27 @@ class FormPayment extends React.Component {
                 </Row>
                 <hr />
                 <Row className="displaySearch">
-                    <Form onSubmit={this.handleSubmit} initialValues={data} className="form-signin">
+                    {/* <Col span={15} offset={8}>
+
+                        <Input addonBefore="Wallet Number" value={walletNumber} type="text" disabled={true} />
+                        <Input addonBefore="Email" value={email} type="text" disabled={true} />
+                        <Input addonBefore="Full Name" value={name} type="text" disabled={true} />
+                        <Input addonBefore="Phone" value={phone} type="text" disabled={true} />
+                        <Input addonBefore="Identity Number" value={indenityNumber} type="text" disabled={true} />
+                        <Input addonBefore="Balance" value={balance} type="text" disabled={true} />
+                        <Input addonBefore="Day of Birth" value={dob} type="text" disabled={true} />
+
+                    </Col> */}
+                    <Form initialValues={data}
+                        ref={this.formRef}
+                        className="form-signin">
 
                         <FormItem
                             {...formItemLayout}
                             label="Wallet Number"
                             name="walletNumber"
                         >
-                            <Input type="text" defaultValue={walletNumber} disabled={true} />
+                            <Input value={walletNumber} type="text" disabled={true} />
 
                         </FormItem>
                         <FormItem
@@ -205,7 +235,7 @@ class FormPayment extends React.Component {
                         >
 
 
-                            <Input type="text" defaultValue={email} disabled={true} />
+                            <Input type="text" disabled={true} />
 
                         </FormItem>
                         <FormItem
@@ -214,7 +244,7 @@ class FormPayment extends React.Component {
                             name="name"
                         >
 
-                            <Input type="text" defaultValue={name} disabled={true} />
+                            <Input type="text" disabled={true} />
 
                         </FormItem>
 
@@ -226,7 +256,7 @@ class FormPayment extends React.Component {
                         >
 
 
-                            <Input type="text" defaultValue={phone} disabled={true} />
+                            <Input type="text" disabled={true} />
 
                         </FormItem>
                         <FormItem
@@ -237,7 +267,7 @@ class FormPayment extends React.Component {
                         >
 
 
-                            <Input type="text" defaultValue={indenityNumber} disabled={true} />
+                            <Input type="text" disabled={true} />
 
                         </FormItem>
                         <FormItem
@@ -247,8 +277,12 @@ class FormPayment extends React.Component {
 
                         >
 
-
-                            <Input type="text" defaultValue={balance + 'VND'} disabled={true} />
+                            <InputNumber className="inputAmount"
+                                disabled={true}
+                                onChange={(e) => { }}
+                                formatter={value => `đ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                parser={value => value.replace(/\đ\s?|(,*)/g, '')}
+                            />
 
                         </FormItem>
 
@@ -260,7 +294,7 @@ class FormPayment extends React.Component {
                                     name="dob"
                                 >
 
-                                    <Input type="text" defaultValue={dob} disabled={true} className="dateInput" />
+                                    <Input type="text" disabled={true} className="dateInput" />
 
                                 </FormItem>
                             </Col>
@@ -270,6 +304,7 @@ class FormPayment extends React.Component {
 
                     </Form>
                 </Row>
+
                 <hr />
                 <Table
                     columns={this.columns}

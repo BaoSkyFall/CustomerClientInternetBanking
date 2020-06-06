@@ -7,7 +7,7 @@ export const actRechargeRequest = (data, accessToken) => {
     console.log(data)
     return (dispatch) => {
         dispatch(actRecharge());
-        return callApi(`wallet/recharge`, 'POST', data, { x_accessToken: accessToken })
+        return callApi(`/api/staff/getInfoUserByWalletId/`, 'POST', data, { x_accessToken: accessToken })
             .then(res => {
                 if (res.status === 200) {
                     dispatch(actRechargeSuccess());
@@ -52,9 +52,10 @@ export const actRechargeReset = () => {
 export const actSearchAccountRequest = (id, accessToken) => {
     return (dispatch) => {
         dispatch(actResetStatus());
-        return callApi(`wallet/recharge/${id}`, 'GET', null, { x_accessToken: accessToken })
+        return callApi(`api/staff/getInfoUserByWalletId/${id}`, 'GET', null, { x_accessToken: accessToken })
             .then(res => {
                 if (res.status === 200) {
+                    console.log("res: ",res)
                     dispatch(actSearchAccount(res.data.data[0]))
                 } else {
                     dispatch(actSearchAccountFail())
