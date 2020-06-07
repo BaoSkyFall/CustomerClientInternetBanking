@@ -7,10 +7,11 @@ export const actRechargeRequest = (data, accessToken) => {
     console.log(data)
     return (dispatch) => {
         dispatch(actRecharge());
-        return callApi(`/api/staff/getInfoUserByWalletId/`, 'POST', data, { x_accessToken: accessToken })
+        return callApi(`api/money/addMoney`, 'POST', data, { x_accessToken: accessToken })
             .then(res => {
                 if (res.status === 200) {
-                    dispatch(actRechargeSuccess());
+                    console.log('data: recharge', data)
+                    dispatch(actRechargeSuccess(data));
                 }
                 else {
                     dispatch(actRechargeFail())
@@ -29,9 +30,10 @@ export const actRecharge = () => {
     }
 }
 
-export const actRechargeSuccess = () => {
+export const actRechargeSuccess = (data) => {
     return {
-        type: Types.UPDATE_BALANCE_SUCCESS
+        type: Types.UPDATE_BALANCE_SUCCESS,
+        data
     }
 }
 

@@ -7,7 +7,9 @@ import {
     fetchGetDebtOwner,
     addDebtReminder,
     showAddModal,
-    handleCancelModal
+    handleCancelModal,
+    fetchGetNameByWalletId,
+    deleteDebtOwner
 } from '../../actions/customer/debt-reminder';
 
 
@@ -24,7 +26,9 @@ const mapStateToProps = (state) => {
         visible:state.debtReminderReducer.visible,
         confirmLoading:state.debtReminderReducer.confirmLoading,
         debtorModal:state.debtReminderReducer.debtorModal,
-
+        name:state.debtReminderReducer.name,
+        walletId:state.debtReminderReducer.walletId,
+        isAction: state.debtReminderReducer.isAction
     }
 };
 
@@ -33,9 +37,11 @@ const mapDispatchToProps = (dispatch) => {
         fetchGetDebtReminder: (email, accessToken) => dispatch(fetchGetDebtReminder(email, accessToken)),
         fetchTranferMoneyDebt: (email, accessToken, id_owner, money) => dispatch(fetchTranferMoneyDebt(email, accessToken, id_owner, money)),
         fetchGetDebtOwner: (email, accessToken) => dispatch(fetchGetDebtOwner(email, accessToken)),
-        addDebtReminder: (email, accessToken, id_debt, money) => dispatch(addDebtReminder(email, accessToken, id_debt, money)),
+        fetchGetNameByWalletId: (wallet_id,accessToken)=>dispatch(fetchGetNameByWalletId(wallet_id,accessToken)),
+        addDebtReminder: (data, accessToken) => dispatch(addDebtReminder(data, accessToken)),
         showAddModal: () => dispatch(showAddModal()),
-        handleCancelModal:()=> dispatch(handleCancelModal())
+        handleCancelModal:()=> dispatch(handleCancelModal()),
+        deleteDebtOwner:(id_debt,accessToken)=> dispatch(deleteDebtOwner(id_debt,accessToken))
     }
 }
 

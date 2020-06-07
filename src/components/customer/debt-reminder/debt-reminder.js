@@ -1,6 +1,6 @@
 import React from 'react';
-import { Table, notification, Spin, Card, Row, Col, Checkbox, Button, Modal, Form, Input } from 'antd';
-import { PlusSquareOutlined } from '@ant-design/icons';
+import { Table, notification, Spin, Card, Row, InputNumber, Col, Popconfirm, Button, Modal, Form, Input } from 'antd';
+import { PlusSquareOutlined, RetweetOutlined, DeleteFilled, TransactionOutlined } from '@ant-design/icons';
 import { Redirect } from 'react-router-dom';
 
 import './debt-reminder.css';
@@ -8,8 +8,10 @@ import { ACCESS_TOKEN_KEY, EMAIL_KEY } from '../../../configs/client';
 import { formatTransaction } from '../../../ultis/transaction';
 import { URL_SERVER } from '../../../configs/server';
 import { WarningOutlined } from '@ant-design/icons';
+import jwt from 'jwt-decode';
 
 class DebtReminder extends React.Component {
+    formRef = React.createRef();
     constructor(props) {
         super(props);
 
@@ -24,7 +26,7 @@ class DebtReminder extends React.Component {
             dataIndex: 'walletID',
             width: '18%',
             defaultSortOrder: 'descend',
-            sorter: (a, b) => a.walletID.localeCompare(b.walletID),
+            sorter: (a, b) => a.walletID - b.walletID,
         }, {
             title: 'Date Create',
             dataIndex: 'dateCreate',
@@ -34,15 +36,21 @@ class DebtReminder extends React.Component {
         }, {
             title: 'Amount (VND)',
             className: 'column-money',
-            dataIndex: 'amount',
+            dataIndex: 'money_debt',
             defaultSortOrder: 'descend',
             width: '15%',
-            sorter: (a, b) => a.amount.localeCompare(b.amount),
+            sorter: (a, b) => a.money_debt - b.money_debt,
         }, {
             title: "Description",
-            dataIndex: 'message',
+            dataIndex: 'description',
             defaultSortOrder: 'descend',
-        }];
+        }, {
+            title: 'Action',
+            key: 'operation',
+            fixed: 'right',
+            width: 100,
+            render: () => <a onClick={() => { }} style={{ color: '#1890ff', fontSize: '15px' }}><TransactionOutlined style={{ marginRight: '4px' }} />Pay</a>,
+        },];
         this.columnsDebtOwners = [{
             title: 'Debtor',
             dataIndex: 'debtor',
@@ -54,7 +62,7 @@ class DebtReminder extends React.Component {
             dataIndex: 'walletID',
             width: '18%',
             defaultSortOrder: 'descend',
-            sorter: (a, b) => a.walletID.localeCompare(b.walletID),
+            sorter: (a, b) => a.walletID - b.walletID,
         }, {
             title: 'Date Create',
             dataIndex: 'dateCreate',
@@ -64,15 +72,23 @@ class DebtReminder extends React.Component {
         }, {
             title: 'Amount (VND)',
             className: 'column-money',
-            dataIndex: 'amount',
+            dataIndex: 'money_debt',
             defaultSortOrder: 'descend',
             width: '15%',
-            sorter: (a, b) => a.amount.localeCompare(b.amount),
+            sorter: (a, b) => a.money_debt - b.money_debt,
         }, {
             title: "Description",
-            dataIndex: 'message',
+            dataIndex: 'description',
             defaultSortOrder: 'descend',
-        }];
+        },
+        {
+            title: 'Action',
+            key: 'operation',
+            fixed: 'right',
+            width: 100,
+            render: (text, record) => <Popconfirm title="Sure to delete?" onConfirm={() => this.onDeleteDebtOwner(record)}>
+                <a style={{ color: '#f5222d', fontSize: '15px' }}><DeleteFilled style={{ marginRight: '4px' }} />Delete</a>            </Popconfirm>
+        },];
         this.state = {
             accessToken: localStorage.getItem(ACCESS_TOKEN_KEY) || '',
             email: localStorage.getItem(EMAIL_KEY) || '',
@@ -87,8 +103,30 @@ class DebtReminder extends React.Component {
     onFinishFailed = errorInfo => {
         console.log('Failed:', errorInfo);
     };
+    componentDidUpdate() {
+        const { isAction, name, messageError } = this.props;
+        if (isAction) {
+            const { accessToken, email } = this.state;
+            var decoded = jwt(accessToken);
+            this.props.fetchGetDebtReminder(decoded.userId, accessToken)
+            this.props.fetchGetDebtOwner(decoded.userId, accessToken)
+        }
+        if (name || messageError) {
+            console.log("name: ", name)
+            this.formRef.current.setFieldsValue({ name: this.props.name })
+        }
+    }
+    onDeleteDebtOwner(record) {
+        const { accessToken } = this.state;
+
+        console.log('record:', record)
+        this.props.deleteDebtOwner(record.id_debt, accessToken);
+    }
     componentDidMount() {
         const { accessToken, email } = this.state;
+        var decoded = jwt(accessToken);
+        this.props.fetchGetDebtReminder(decoded.userId, accessToken)
+        this.props.fetchGetDebtOwner(decoded.userId, accessToken)
         // this.props.fetchTransactionHistory(email, accessToken);
 
         // fetch(`${URL_SERVER}/user/me`, {
@@ -112,10 +150,26 @@ class DebtReminder extends React.Component {
         //     }
         // })
     }
+    handlePressEnter = (values) => {
+        let wallet_id = values.target.value;
+        console.log("wallet id: ", wallet_id)
+        if (wallet_id) {
+            this.props.fetchGetNameByWalletId(wallet_id)
+        }
+    }
+    handleOk = () => {
+        const { accessToken } = this.state;
+        this.setState({
+            confirmLoading: true,
+        });
+        let data = this.formRef.current.getFieldsValue()
+        this.props.addDebtReminder(data,accessToken)
+    }
 
     render() {
-        const { isLoading, debtReminders, messageError, showAddModal
+        const { isLoading, debtReminders, messageError, walletId, debtOwner, name
             , handleCancelModal } = this.props;
+        console.log('debtReminders:', debtReminders);
         const { visible, confirmLoading } = this.state;
         const layout = {
             labelCol: { span: 8 },
@@ -147,9 +201,9 @@ class DebtReminder extends React.Component {
                     </Row>
                     <Table
                         columns={this.columnsDebtReminders}
-                        dataSource={formatTransaction(debtReminders)}
+                        dataSource={debtReminders}
                         onChange={this.handleChange}
-                        pagination={{ pageSize: 10 }}
+                        pagination={{ pageSize: 5 }}
                         scroll={{ y: '60vh' }}
                         bordered />
                 </Card>
@@ -157,56 +211,53 @@ class DebtReminder extends React.Component {
                 <Card title="Debt Owner List" bordered={false} style={{ width: '90%' }}>
                     <Table
                         columns={this.columnsDebtOwners}
-                        dataSource={formatTransaction(debtReminders)}
+                        dataSource={debtOwner}
                         onChange={this.handleChange}
-                        pagination={{ pageSize: 10 }}
+                        pagination={{ pageSize: 5 }}
                         scroll={{ y: '60vh' }}
                         bordered />
                 </Card>
                 <Modal
                     title="Add Debt Reminder"
                     visible={visible}
-                    onOk={() => {
-                        this.setState({
-                            confirmLoading: true,
-                        });
-                        setTimeout(() => {
-                            this.setState({
-                                visible: false,
-                                confirmLoading: false,
-                            });
-                        }, 2000);
-                    }}
+                    onOk={
+                        this.handleOk
+                    }
                     confirmLoading={confirmLoading}
                     onCancel={() => { this.setState({ visible: false }) }}
                 >
                     <Form
                         {...layout}
                         name="basic"
-                        initialValues={{ remember: true }}
+                        ref={this.formRef}
+                        initialValues={{ walletId: '', remember: true }}
                         onFinish={this.onFinish()}
                         onFinishFailed={this.onFinishFailed()}
                     >
                         <Form.Item
                             label="Debtor ID Wallet"
-                            name="debtor"
+                            name="walletId"
                             rules={[{ required: true, message: 'Please input your Debtor ID Wallet!' }]}
                         >
-                            <Input />
+                            <Input value={walletId} onPressEnter={this.handlePressEnter} type="number" />
                         </Form.Item>
                         <Form.Item
                             label="Debtor"
                             name="name"
-                            
+
                         >
-                            <Input disabled={true}/>
+                            <Input disabled={true} />
                         </Form.Item>
                         <Form.Item
                             label="Amount"
                             name="amount"
                             rules={[{ required: true, message: 'Please input your Amount!' }]}
                         >
-                            <Input />
+                            <InputNumber className="inputAmount"
+                                onChange={(e) => { }}
+                                formatter={value => `đ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                parser={value => value.replace(/\đ\s?|(,*)/g, '')}
+                            />
                         </Form.Item>
                         <Form.Item
                             label="Description"
@@ -219,11 +270,11 @@ class DebtReminder extends React.Component {
                         </Form.Item>
 
 
-                      
+
                     </Form>
                 </Modal>
 
-            </React.Fragment>
+            </React.Fragment >
         )
 
         return (

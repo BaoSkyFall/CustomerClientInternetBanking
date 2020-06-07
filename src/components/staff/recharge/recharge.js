@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import "antd/dist/antd.css";
 import './recharge.css'
-import { Card, Col, Row, Button, Form, Input, InputNumber, message, Spin } from 'antd';
+import { Card, Col, Row, Button, Form, notification, Input, InputNumber, message, Spin } from 'antd';
+import { CloseOutlined } from '@ant-design/icons'
 import { URL_SERVER } from '../../../configs/server';
 import { ACCESS_TOKEN_KEY, EMAIL_KEY } from '../../../configs/client';
 const FormItem = Form.Item;
@@ -42,7 +43,7 @@ class Recharge extends Component {
         this.props.form.validateFields((err, values) => {
             var dt = {
                 walletNumber: values.accountNumber,
-                amount: values.Amount
+                amount: values.amount
             }
             var accessToken = window.localStorage.getItem('accesstoken')
             this.props.updateBalance(dt, accessToken)
@@ -50,7 +51,9 @@ class Recharge extends Component {
     }
     componentDidUpdate() {
         var data = this.props.recharge
+        console.log('data:', data);
         this.formRef.current.setFieldsValue(data)
+
 
     }
     showAlert = () => {
@@ -70,7 +73,32 @@ class Recharge extends Component {
             );
         }
     }
+    onFinish = (values) => {
 
+        console.log('values:', values)
+        let accessToken = window.localStorage.getItem('accesstoken');
+        let data = {
+            username: values.username,
+            money: values.amount
+        }
+        this.props.updateBalance(data, accessToken)
+    }
+    showAlertSearching = () => {
+        var { isSearchIdSuccess, isSearchIdFail, walletNumber } = this.props.recharge;
+        if (isSearchIdSuccess) {
+            message.success(`Your info have Wallet number: ${walletNumber}`, 8);
+            // this.props.resetStatusSearch();
+        } else if (isSearchIdFail) {
+            message.error("Can't find info from your Input, please check again!", 3)
+            // this.props.resetStatusSearch();
+            // } else if (isLoading) {
+            //     return (
+            //         <Row className="progress">
+            //             <Spin tip="Loading..." />
+            //         </Row>
+            //     );
+        }
+    }
     render() {
         const formItemLayout = {
             labelCol: {
@@ -95,16 +123,22 @@ class Recharge extends Component {
                                 placeholder="Input Wallet ID"
                                 enterButton="Search"
                                 size="large"
+                                type="number"
                                 // value="phanhaibinh"
-                                onSearch={(defaultValue) => { this.props.searchAccount(defaultValue, accessToken) }}
+                                onSearch={(defaultValue) => {
+                                    this.formRef.current.setFieldsValue({ amount: '' })
+
+                                    this.props.searchAccount(defaultValue, accessToken)
+                                }}
                             />
+                            {this.showAlertSearching()}
                         </Col>
                     </Row>
 
                     <Form
                         ref={this.formRef}
 
-                        onSubmit={this.handleSubmit} className="submitRecharge">
+                        onFinish={this.onFinish} className="submitRecharge">
                         <div style={{ background: '#ECECEC', padding: '30px' }}>
 
 
@@ -125,6 +159,15 @@ class Recharge extends Component {
                                 {...formItemLayout}
                                 label="Full Name"
                                 name="name"
+                            >
+
+                                <Input type="text" defaultValue={""} disabled={true} />
+
+                            </FormItem>
+                            <FormItem
+                                {...formItemLayout}
+                                label="Username"
+                                name="username"
                             >
 
                                 <Input type="text" defaultValue={""} disabled={true} />
@@ -159,7 +202,7 @@ class Recharge extends Component {
                             <FormItem
                                 {...formItemLayout}
                                 label="Amount"
-                                name="Amount"
+                                name="amount"
                             >
 
 
@@ -171,15 +214,16 @@ class Recharge extends Component {
 
                             </FormItem>
                             {this.showAlert()}
-                            <Row >
-                                <FormItem>
-                                    <Button className="buttonRegister"
-                                        type="primary" htmlType="submit"
-                                    >
-                                        ADD MONEY
+
+                            <FormItem>
+                                <Button className="buttonRegister"
+                                    type="primary" htmlType="submit"
+
+                                >
+                                    ADD MONEY
                                 </Button>
-                                </FormItem>
-                            </Row>
+                            </FormItem>
+
 
                         </div>
                     </Form >

@@ -69,7 +69,8 @@ class FormPayment extends React.Component {
     componentDidUpdate() {
         console.log('formRef:', this.formRef.current)
         let data = this.props.paymentAccount;
-        data.dob = formatDate(data.dob, 'DD-MM-YYYY');
+        if (data.dob)
+            data.dob = formatDate(data.dob, 'DD-MM-YYYY');
         this.formRef.current.setFieldsValue(data)
     }
     componentWillUnmount() {
@@ -181,7 +182,6 @@ class FormPayment extends React.Component {
             },
         };
 
-        const fields = ['walletNumber,name,dob,phone,email,balance,indentiyNumber']
         var accessToken = window.localStorage.getItem('accesstoken');
         return (
             <div>
@@ -262,7 +262,7 @@ class FormPayment extends React.Component {
                         <FormItem
                             {...formItemLayout}
                             label="Identity Number"
-                            name="indenityNumber"
+                            name="idenityNumber"
 
                         >
 

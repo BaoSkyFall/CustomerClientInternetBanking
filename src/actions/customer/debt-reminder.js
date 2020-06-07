@@ -12,23 +12,30 @@ import {
     ADD_DEBT_REMINDER,
     ADD_DEBT_REMINDER_SUCCESS,
     ADD_DEBT_REMINDER_FAIL,
+    GET_NAME_BY_WALLET_ID,
+    GET_NAME_BY_WALLET_ID_SUCCESS,
+    GET_NAME_BY_WALLET_ID_FAIL,
+    DELETE_DEBT_OWNER,
+    DELETE_DEBT_OWNER_SUCCESS,
+    DELETE_DEBT_OWNER_FAIL,
     SHOW_ADD_MODAL,
     HANDLE_CANCEL_MODAL
 
 } from '../../constants/customer/debt-reminder.js';
 import { URL_SERVER, URL_SERVER_DEPLOY } from '../../configs/server';
+import callApi from '../../ultis/callApi';
 
 
-const fetchGetDebtReminder = (email, accessToken) => {
+const fetchGetDebtReminder = (id_debtor, accessToken) => {
     return (dispatch) => {
         dispatch({ type: FETCH_GET_DEBT_REMINDER });
-
-        axios.post(URL_SERVER_DEPLOY, {})
+        return callApi(`api/debt-reminder/getDebtReminder/${id_debtor}`, 'GET', {}, { x_accessToken: accessToken })
             .then(res => {
-                if (!res.data.errors) {
+                console.log('res:', res);
+                if (res.status === 200) {
                     dispatch({
                         type: FETCH_GET_DEBT_REMINDER_SUCCESS,
-                        debtReminders: res.data.data.receivers
+                        debtReminders: res.data.data
                     });
                 }
                 else {
@@ -38,9 +45,13 @@ const fetchGetDebtReminder = (email, accessToken) => {
                     });
                 }
             })
-            .catch(error => {
-                console.log(error);
+            .catch((err) => {
+                dispatch({
+                    type: FETCH_GET_DEBT_REMINDER_FAIL,
+                    messageError: "Error Server"
+                });
             })
+
     }
 }
 const fetchTranferMoneyDebt = (email, accessToken, id_owner, money) => {
@@ -49,12 +60,13 @@ const fetchTranferMoneyDebt = (email, accessToken, id_owner, money) => {
 
         return axios.post(URL_SERVER_DEPLOY, {})
             .then(res => {
-                if (!res.data.errors) {
+                if (res.status === 201) {
                     dispatch({
                         type: FETCH_TRANFER_MONEY_DEBT_SUCCESS,
                         messageSuccess: res.data.data
                     });
                 }
+
                 else {
                     dispatch({
                         type: FETCH_TRANFER_MONEY_DEBT_FAIL,
@@ -67,11 +79,11 @@ const fetchTranferMoneyDebt = (email, accessToken, id_owner, money) => {
             })
     }
 }
-const fetchGetDebtOwner = (email, accessToken) => {
+const fetchGetDebtOwner = (id_owner, accessToken) => {
     return (dispatch) => {
         dispatch({ type: FETCH_GET_DEBT_OWNER });
 
-        axios.post(URL_SERVER_DEPLOY, {})
+        return callApi(`api/debt-reminder/getDebtOwner/${id_owner}`, 'GET', {}, { x_accessToken: accessToken })
             .then(res => {
                 if (!res.data.errors) {
                     dispatch({
@@ -91,24 +103,20 @@ const fetchGetDebtOwner = (email, accessToken) => {
             })
     }
 }
-
-const addDebtReminder = (email, accessToken, id_debt, money) => {
+const deleteDebtOwner = (id_debt, accessToken) => {
     return (dispatch) => {
-        dispatch({
-            type: ADD_DEBT_REMINDER
-        });
+        dispatch({ type: DELETE_DEBT_OWNER });
 
-        axios.post(URL_SERVER_DEPLOY, {})
+        return callApi(`api/debt-reminder/deleteDebtReminder/`, 'DELETE', { id_debt }, { x_accessToken: accessToken })
             .then(res => {
                 if (!res.data.errors) {
                     dispatch({
-                        type: ADD_DEBT_REMINDER_SUCCESS,
-                        messageSuccess: res.data
-                    })
+                        type: DELETE_DEBT_OWNER_SUCCESS,
+                    });
                 }
                 else {
                     dispatch({
-                        type: ADD_DEBT_REMINDER_FAIL,
+                        type: DELETE_DEBT_OWNER_FAIL,
                         messageError: res.data.errors[0].message
                     });
                 }
@@ -116,6 +124,67 @@ const addDebtReminder = (email, accessToken, id_debt, money) => {
             .catch(error => {
                 console.log(error);
             })
+    }
+}
+
+
+const fetchGetNameByWalletId = (wallet_id, accessToken) => {
+    return (dispatch) => {
+        dispatch({ type: GET_NAME_BY_WALLET_ID });
+
+        return callApi(`api/debt-reminder/getNameByWalletId/${wallet_id}`, 'GET', {}, { x_accessToken: accessToken })
+            .then(res => {
+                if (!res.data.errors && res.data.data.length > 0) {
+                    console.log("res.data: ", res.data.data[0])
+                    dispatch({
+                        type: GET_NAME_BY_WALLET_ID_SUCCESS,
+                        name: res.data.data[0].name
+                    });
+                }
+                else {
+                    dispatch({
+                        type: GET_NAME_BY_WALLET_ID_FAIL,
+                        messageError: "Can't find Name"
+                    });
+                }
+
+            })
+            .catch(error => {
+                console.log(error);
+            })
+    }
+}
+
+
+const addDebtReminder = (data, accessToken) => {
+    return (dispatch) => {
+        dispatch({
+            type: ADD_DEBT_REMINDER
+        });
+        return callApi(`api/debt-reminder/addDebtReminder/`, 'POST', data, { x_accessToken: accessToken })
+            .then(res => {
+                if (res.status === 201) {
+                    console.log("res.data: ", res.data.data[0])
+                    dispatch({
+                        type: ADD_DEBT_REMINDER_SUCCESS,
+                    });
+                }
+                else {
+                    dispatch({
+                        type: ADD_DEBT_REMINDER_FAIL,
+                        messageError: "Can't Add data it may cause from server"
+                    });
+                }
+
+            })
+            .catch(error => {
+                console.log(error)
+                dispatch({
+                    type: ADD_DEBT_REMINDER_FAIL,
+                    messageError: "Can't Add data it may cause from server"
+                });
+            })
+
     }
 }
 const showAddModal = () => {
@@ -136,6 +205,8 @@ const handleCancelModal = () => {
 export {
     fetchGetDebtReminder,
     fetchTranferMoneyDebt,
+    fetchGetNameByWalletId,
+    deleteDebtOwner,
     fetchGetDebtOwner,
     addDebtReminder,
     handleCancelModal,
