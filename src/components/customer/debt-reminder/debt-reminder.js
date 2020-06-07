@@ -109,11 +109,12 @@ class DebtReminder extends React.Component {
             const { accessToken, email } = this.state;
             var decoded = jwt(accessToken);
             this.props.fetchGetDebtReminder(decoded.userId, accessToken)
-            this.props.fetchGetDebtOwner(decoded.userId, accessToken)
+            this.props.fetchGetDebtOwner(decoded.userId, accessToken);
+            this.props.handleCancelModal();
         }
         if (name || messageError) {
             console.log("name: ", name)
-            this.formRef.current.setFieldsValue({ name: this.props.name })
+            this.formRef.current.setFieldsValue({ name })
         }
     }
     onDeleteDebtOwner(record) {
@@ -159,18 +160,30 @@ class DebtReminder extends React.Component {
     }
     handleOk = () => {
         const { accessToken } = this.state;
+        const { idDebtor } = this.props
         this.setState({
             confirmLoading: true,
         });
         let data = this.formRef.current.getFieldsValue()
-        this.props.addDebtReminder(data,accessToken)
+        var decoded = jwt(accessToken);
+        console.log('decoded:', decoded);
+        let dt = {
+            id_debtor: idDebtor,
+            id_owner: decoded.userId,
+            money_debt: data.amount,
+            description: data.description
+        }
+        console.log('dt:', dt)
+        console.log('this.props hanldeok:', this.props);
+
+        this.props.addDebtReminder(dt, accessToken);
     }
 
     render() {
         const { isLoading, debtReminders, messageError, walletId, debtOwner, name
-            , handleCancelModal } = this.props;
+            , visible } = this.props;
         console.log('debtReminders:', debtReminders);
-        const { visible, confirmLoading } = this.state;
+        const { confirmLoading } = this.state;
         const layout = {
             labelCol: { span: 8 },
             wrapperCol: { span: 16 },
@@ -191,30 +204,31 @@ class DebtReminder extends React.Component {
                         icon: <WarningOutlined style={{ color: 'red' }} />,
                     }) : null}
                 <Card title="Debt Reminder List" bordered={false} style={{ width: '90%' }}>
-                    <Row>
-                        <Col span={2}>
-                            <Button
-                                type="primary"
-                                icon={<PlusSquareOutlined />}
-                                onClick={() => { this.setState({ visible: true }) }}>Add Debt Reminder</Button>
-                        </Col>
-                    </Row>
+
                     <Table
                         columns={this.columnsDebtReminders}
                         dataSource={debtReminders}
                         onChange={this.handleChange}
                         pagination={{ pageSize: 5 }}
-                        scroll={{ y: '60vh' }}
+                        // scroll={{ y: '80vh' }}
                         bordered />
                 </Card>
                 <hr />
                 <Card title="Debt Owner List" bordered={false} style={{ width: '90%' }}>
+                    <Row>
+                        <Col span={2}>
+                            <Button
+                                type="primary"
+                                icon={<PlusSquareOutlined />}
+                                onClick={() => { this.props.showAddModal() }}>Add Debt Reminder</Button>
+                        </Col>
+                    </Row>
                     <Table
                         columns={this.columnsDebtOwners}
                         dataSource={debtOwner}
                         onChange={this.handleChange}
                         pagination={{ pageSize: 5 }}
-                        scroll={{ y: '60vh' }}
+                        // scroll={{ y: '80vh' }}
                         bordered />
                 </Card>
                 <Modal
@@ -224,7 +238,7 @@ class DebtReminder extends React.Component {
                         this.handleOk
                     }
                     confirmLoading={confirmLoading}
-                    onCancel={() => { this.setState({ visible: false }) }}
+                    onCancel={() => { this.props.handleCancelModal() }}
                 >
                     <Form
                         {...layout}

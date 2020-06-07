@@ -27,8 +27,10 @@ const mapStateToProps = (state) => {
         confirmLoading:state.debtReminderReducer.confirmLoading,
         debtorModal:state.debtReminderReducer.debtorModal,
         name:state.debtReminderReducer.name,
+        idDebtor:state.debtReminderReducer.idDebtor,
         walletId:state.debtReminderReducer.walletId,
         isAction: state.debtReminderReducer.isAction
+        
     }
 };
 

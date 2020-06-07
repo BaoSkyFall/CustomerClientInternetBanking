@@ -138,7 +138,9 @@ const fetchGetNameByWalletId = (wallet_id, accessToken) => {
                     console.log("res.data: ", res.data.data[0])
                     dispatch({
                         type: GET_NAME_BY_WALLET_ID_SUCCESS,
-                        name: res.data.data[0].name
+                        name: res.data.data[0].name,
+                        id: res.data.data[0].id
+
                     });
                 }
                 else {
@@ -161,6 +163,7 @@ const addDebtReminder = (data, accessToken) => {
         dispatch({
             type: ADD_DEBT_REMINDER
         });
+        console.log('data:', data)
         return callApi(`api/debt-reminder/addDebtReminder/`, 'POST', data, { x_accessToken: accessToken })
             .then(res => {
                 if (res.status === 201) {

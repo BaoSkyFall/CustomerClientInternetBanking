@@ -29,7 +29,9 @@ const initialState = {
     messageError: '',
     name: '',
     walletId: '',
+    idDebtor:'',
     isLoading: false,
+    
     visible: false,
     confirmLoading: false,
     isAction: false,
@@ -41,7 +43,10 @@ export default function debtReminderReducer(state = initialState, action) {
         case FETCH_GET_DEBT_REMINDER: {
             return {
                 ...state,
-                isLoading: true
+                isLoading: true,
+                
+                name:'',
+                idDebtor:''
             }
         }
         case FETCH_GET_DEBT_REMINDER_SUCCESS: {
@@ -49,7 +54,9 @@ export default function debtReminderReducer(state = initialState, action) {
                 ...state,
                 debtReminders: action.debtReminders,
                 isLoading: false,
-                isAction: false
+                isAction: false,
+                name:'',
+                idDebtor:''
 
             }
         }
@@ -73,7 +80,9 @@ export default function debtReminderReducer(state = initialState, action) {
                 ...state,
                 messageSuccess: action.messageSuccess,
                 isLoading: false,
-                isAction: false
+                isAction: false,
+                name:'',
+                idDebtor:''
 
             }
         }
@@ -88,6 +97,8 @@ export default function debtReminderReducer(state = initialState, action) {
         case FETCH_GET_DEBT_OWNER: {
             return {
                 ...state,
+                name:'',
+                idDebtor:''
                 // isLoading:true
             }
         }
@@ -96,8 +107,9 @@ export default function debtReminderReducer(state = initialState, action) {
                 ...state,
                 debtOwner: action.debtOwner,
                 isLoading: false,
-                isAction: false
-
+                isAction: false,
+                name:'',
+                idDebtor:''
             }
         }
         case FETCH_GET_DEBT_OWNER_FAIL: {
@@ -111,7 +123,7 @@ export default function debtReminderReducer(state = initialState, action) {
         case ADD_DEBT_REMINDER: {
             return {
                 ...state,
-                isAction:true
+                isAction:true,
                 // isLoading:true
             }
         }
@@ -120,6 +132,7 @@ export default function debtReminderReducer(state = initialState, action) {
                 ...state,
                 messageSuccess: action.messageSuccess,
                 isLoading: false,
+                isAction:true,
 
             }
         }
@@ -168,8 +181,8 @@ export default function debtReminderReducer(state = initialState, action) {
                 isLoading: false,
                 messageError: '',
                 // isAction:false,
-                name: action.name
-
+                name: action.name,
+                idDebtor: action.id
 
             }
         }
@@ -190,7 +203,6 @@ export default function debtReminderReducer(state = initialState, action) {
                 name: '',
                 walletId: '',
                 isLoading: false,
-                visible: false,
                 confirmLoading: false,
                 isAction: false,
                 debtorModal: null,
@@ -205,7 +217,6 @@ export default function debtReminderReducer(state = initialState, action) {
                 name: '',
                 walletId: '',
                 isLoading: false,
-                visible: false,
                 confirmLoading: false,
                 isAction: false,
                 debtorModal: null,
