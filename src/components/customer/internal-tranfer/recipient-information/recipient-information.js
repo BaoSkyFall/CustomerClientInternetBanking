@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Input, Card, Select, Form, Button } from 'antd';
-import { UsergroupAddOutlined } from '@ant-design/icons';
+import { Input, Card, Select, Form, Button, Tabs } from 'antd';
+import { UsergroupAddOutlined,RetweetOutlined, InteractionFilled, BankOutlined } from '@ant-design/icons';
 import './recipient-information.css'
 const Option = Select.Option;
-
+const { TabPane } = Tabs;
 class Recipient extends Component {
+    tabsRef = React.createRef();
     constructor(props) {
         super(props);
 
@@ -17,9 +18,13 @@ class Recipient extends Component {
         this.setState({ value });
     }
 
-    handleSelect = (value) => {
+    handleSelectLocal = (value) => {
         const { accessToken } = this.props;
-        this.props.trackRecipient(value, accessToken);
+        this.props.trackRecipientLocal(value, accessToken);
+    }
+    handleSelectForeign = (value) => {
+        const { accessToken } = this.props;
+        this.props.trackRecipientForeign(value, accessToken);
     }
 
     handleAdd = () => {
@@ -28,69 +33,151 @@ class Recipient extends Component {
         this.props.addRecipient(email, value, '', accessToken);
     }
 
-    recipientWalletsLayout = () => {
-        const { recipients } = this.props;
+    recipientLocalWalletsLayout = () => {
+        const { recipientsLocal } = this.props;
         let options = [];
 
-        if (recipients.length === 0)
+        if (recipientsLocal.length === 0)
             return (
-                <Option value=''>Not Recipients</Option>
+                <Option value=''>Not RecipientsLocal</Option>
             );
-
-        recipients.forEach(recipient => {
+        console.log('recipientsLocal:', recipientsLocal)
+        recipientsLocal.forEach(recipient => {
             options.push(
-                <Option value={recipient.walletNumber}>
-                    {recipient.remindName}
-                    <small style={{ float: "right" }}>{recipient.walletNumber}</small>
+                <Option value={recipient.walletId}>
+                    {recipient.walletId}
+                    <small style={{ float: "right" }}>{recipient.walletId}</small>
                 </Option>
             )
         });
+        const { b } = this.props
+
+
         return options;
     }
+    recipientForeignWalletsLayout = () => {
+        const { recipientsForeign } = this.props;
+        let options = [];
 
+        if (recipientsForeign.length === 0)
+            return (
+                <Option value=''>Not RecipientsForeign</Option>
+            );
+        console.log('recipientsForeign:', recipientsForeign)
+        recipientsForeign.forEach(recipient => {
+            options.push(
+                <Option value={recipient.walletId}>
+                    {recipient.walletId}
+                    <small style={{ float: "right" }}>{recipient.walletId}</small>
+                </Option>
+            )
+        });
+        const { b } = this.props
+
+
+        return options;
+    }
     render() {
 
-        const { emailRecipient,bankRecipient, fullNameRecipient } = this.props;
+        const { emailRecipient, bankRecipient, fullNameRecipient } = this.props;
 
         return (
             <Card
                 title="Information Of Recipient"
                 style={{ width: "90%" }}
             >
-                <Form.Item {...this.props.formItemLayout} hasFeedback label="Recipient's Wallet Number:" name="destinationWalletNumber" rules={[
-                    { required: true, message: 'Please select a recipient wallet!' },
-                ]}>
-
-                    <Select
-                        mode='combobox'
-                        placeholder="Select a recipient wallet"
-                        onChange={this.handleChange}
-                        onSelect={this.handleSelect}
+                <Tabs onChange={()=>{
+                    this.props.resetStore();
+                }}
+                 ref={this.tabsRef} defaultActiveKey="1">
+                    <TabPane
+                        tab={
+                            <span>
+                                <RetweetOutlined />Internal Tranfer
+                                 </span>
+                        }
+                        key="1"
                     >
-                        {this.recipientWalletsLayout()}
-                    </Select>
+                        <div>
+                            <Form.Item {...this.props.formItemLayout} hasFeedback label="Recipient's Wallet Number:" name="destinationWalletNumber" rules={[
+                                { required: true, message: 'Please select a recipient wallet!' },
+                            ]}>
 
-                </Form.Item>
+                                <Select
+                                    mode='combobox'
+                                    placeholder="Select a recipient wallet"
+                                    onChange={this.handleChange}
+                                    onSelect={this.handleSelectLocal}
+                                >
+                                    {this.recipientLocalWalletsLayout()}
+                                </Select>
 
-                <Form.Item {...this.props.formItemLayout} label='Add contact'>
-                    <Button
-                        type="info"
-                        icon={<UsergroupAddOutlined />}
-                        onClick={this.handleAdd}>
-                        Add
+                            </Form.Item>
+
+                            <Form.Item {...this.props.formItemLayout} label='Add contact'>
+                                <Button
+                                    type="info"
+                                    icon={<UsergroupAddOutlined />}
+                                    onClick={this.handleAdd}>
+                                    Add
                     </Button>
-                </Form.Item>
-                <Form.Item {...this.props.formItemLayout} label="Recipient's Bank:">
-                    <Input type='text' disabled="true" value={bankRecipient} />
-                </Form.Item>
-                <Form.Item {...this.props.formItemLayout} label="Recipient's Email:">
-                    <Input type='text' disabled="true" value={emailRecipient} />
-                </Form.Item>
+                            </Form.Item>
+                            <Form.Item {...this.props.formItemLayout} label="Recipient's Bank:">
+                                <Input type='text' disabled="true" value={bankRecipient} />
+                            </Form.Item>
+                            <Form.Item {...this.props.formItemLayout} label="Recipient's Email:">
+                                <Input type='text' disabled="true" value={emailRecipient} />
+                            </Form.Item>
 
-                <Form.Item {...this.props.formItemLayout} label="Recipient's Full Name:">
-                    <Input type='text' disabled="true" value={fullNameRecipient} />
-                </Form.Item>
-            </Card>
+                            <Form.Item {...this.props.formItemLayout} label="Recipient's Full Name:">
+                                <Input type='text' disabled="true" value={fullNameRecipient} />
+                            </Form.Item></div>                       </TabPane>
+                    <TabPane
+                        tab={
+                            <span>
+                                <BankOutlined />Outernal Tranfer
+                            </span>
+                        }
+                        key="2"
+                    >
+                        <div>
+                            <Form.Item {...this.props.formItemLayout} hasFeedback label="Recipient's Wallet Number:" name="destinationWalletNumber" rules={[
+                                { required: true, message: 'Please select a recipient wallet!' },
+                            ]}>
+
+                                <Select
+                                    mode='combobox'
+                                    placeholder="Select a recipient wallet"
+                                    onChange={this.handleChange}
+                                    onSelect={this.handleSelectForeign}
+                                >
+                                    {this.recipientForeignWalletsLayout()}
+                                </Select>
+
+                            </Form.Item>
+
+                            <Form.Item {...this.props.formItemLayout} label='Add contact'>
+                                <Button
+                                    type="info"
+                                    icon={<UsergroupAddOutlined />}
+                                    onClick={this.handleAdd}>
+                                    Add
+                    </Button>
+                            </Form.Item>
+                            <Form.Item {...this.props.formItemLayout} label="Recipient's Bank:">
+                                <Input type='text' disabled="true" value={bankRecipient} />
+                            </Form.Item>
+
+
+                            <Form.Item {...this.props.formItemLayout} label="Recipient's Full Name:">
+                                <Input type='text' disabled="true" value={fullNameRecipient} />
+                            </Form.Item></div>                       </TabPane>
+                </Tabs>,
+
+
+
+
+            </Card >
         )
     }
 }

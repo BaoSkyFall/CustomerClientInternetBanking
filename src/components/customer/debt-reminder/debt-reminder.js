@@ -113,7 +113,7 @@ class DebtReminder extends React.Component {
             this.props.handleCancelModal();
         }
         if (name || messageError) {
-            console.log("name: ", name)
+
             this.formRef.current.setFieldsValue({ name })
         }
     }

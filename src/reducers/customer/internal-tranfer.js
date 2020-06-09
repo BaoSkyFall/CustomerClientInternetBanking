@@ -1,11 +1,14 @@
-import { 
-    FETCH_USER_WALLETS, 
-    FETCH_USER_WALLETS_SUCCESS, 
+import {
+    FETCH_USER_WALLETS,
+    FETCH_USER_WALLETS_SUCCESS,
     FETCH_USER_WALLETS_FAIL,
-    FETCH_RECIPIENTS,
-    FETCH_RECIPIENTS_SUCCESS,
-    FETCH_RECIPIENTS_FAIL,
-    RESET_STORE, 
+    FETCH_RECIPIENTS_LOCAL,
+    FETCH_RECIPIENTS_LOCAL_SUCCESS,
+    FETCH_RECIPIENTS_LOCAL_FAIL,
+    FETCH_RECIPIENTS_FOREIGN,
+    FETCH_RECIPIENTS_FOREIGN_SUCCESS,
+    FETCH_RECIPIENTS_FOREIGN_FAIL,
+    RESET_STORE,
     SEND_TRANSFER_INFORMATION,
     SEND_TRANSFER_INFORMATION_SUCCESS,
     SEND_TRANSFER_INFORMATION_FAIL,
@@ -13,29 +16,56 @@ import {
     VERIFY_TRANSACTION_SUCCESS,
     VERIFY_TRANSACTION_FAIL,
     TOGGLE_MODAL_TRANSFER,
-    TRACK_RECIPIENT,
-    TRACK_RECIPIENT_SUCCESS,
+    TRACK_RECIPIENT_LOCAL,
+    TRACK_RECIPIENT_LOCAL_SUCCESS,
+    TRACK_RECIPIENT_LOCAL_FAIL,
+    TRACK_RECIPIENT_FOREIGN,
+    TRACK_RECIPIENT_FOREIGN_SUCCESS,
+    TRACK_RECIPIENT_FOREIGN_FAIL,
 } from "../../constants/customer/internal-tranfer";
 
 const initialState = {
     userWallets: [],
-    recipients: [],
+    recipientsLocal: [],
+    recipientsForeign:[],
     idTransaction: '',
     messageSuccess: '',
     messageError: '',
     isShowModalTransfer: false,
+    isLocal:true,
     isLoading: false,
-    bankRecipient:'',
+    bankRecipient: '',
     emailRecipient: '',
     fullNameRecipient: ''
 };
 
 export default function internalTransferReducer(state = initialState, action) {
     switch (action.type) {
-        case FETCH_USER_WALLETS: 
-        case FETCH_RECIPIENTS: 
-        case SEND_TRANSFER_INFORMATION: 
-        case TRACK_RECIPIENT:
+        case FETCH_USER_WALLETS:
+            {
+                return {
+                    ...state,
+                    isLoading: true
+                }
+            }
+        case FETCH_RECIPIENTS_LOCAL: {
+            return {
+                ...state,
+                isLoading: true
+            }
+        }
+        case SEND_TRANSFER_INFORMATION: {
+            return {
+                ...state,
+                isLoading: true
+            }
+        }
+        case TRACK_RECIPIENT_LOCAL: {
+            return {
+                ...state,
+                isLoading: true
+            }
+        }
         case VERIFY_TRANSACTION: {
             return {
                 ...state,
@@ -50,10 +80,17 @@ export default function internalTransferReducer(state = initialState, action) {
                 isLoading: false
             }
         }
-        case FETCH_RECIPIENTS_SUCCESS: {
+        case FETCH_RECIPIENTS_LOCAL_SUCCESS: {
             return {
                 ...state,
-                recipients: action.recipients,
+                recipientsLocal: action.recipientsLocal,
+                isLoading: false
+            }
+        }
+        case FETCH_RECIPIENTS_FOREIGN_SUCCESS: {
+            return {
+                ...state,
+                recipientsForeign: action.recipientsForeign,
                 isLoading: false
             }
         }
@@ -65,11 +102,22 @@ export default function internalTransferReducer(state = initialState, action) {
                 isLoading: false
             }
         }
-        case TRACK_RECIPIENT_SUCCESS: {
+        case TRACK_RECIPIENT_LOCAL_SUCCESS: {
+
             return {
                 ...state,
                 emailRecipient: action.emailRecipient,
                 fullNameRecipient: action.fullNameRecipient,
+                bankRecipient: action.bankRecipient ? action.bankRecipient : 'BBD Bank',
+                isLoading: false
+            }
+        }
+        case TRACK_RECIPIENT_FOREIGN_SUCCESS: {
+
+            return {
+                ...state,
+                fullNameRecipient: action.fullNameRecipient,
+                bankRecipient: action.bankRecipient ? action.bankRecipient : 'BBD Bank',
                 isLoading: false
             }
         }
@@ -80,9 +128,24 @@ export default function internalTransferReducer(state = initialState, action) {
                 isLoading: false
             }
         }
-        case FETCH_USER_WALLETS_FAIL: 
-        case FETCH_RECIPIENTS_FAIL: 
-        case SEND_TRANSFER_INFORMATION_FAIL: 
+        case FETCH_USER_WALLETS_FAIL: {
+            return {
+                ...state,
+                isLoading: false
+            }
+        }
+        case FETCH_RECIPIENTS_LOCAL_FAIL: {
+            return {
+                ...state,
+                isLoading: false
+            }
+        }
+        case SEND_TRANSFER_INFORMATION_FAIL: {
+            return {
+                ...state,
+                isLoading: false
+            }
+        }
         case VERIFY_TRANSACTION_FAIL: {
             return {
                 ...state,
@@ -93,9 +156,16 @@ export default function internalTransferReducer(state = initialState, action) {
         case RESET_STORE: {
             return {
                 ...state,
+                userWallets: [],
+                isLocal: !state.isLocal,
+                idTransaction: '',
                 messageSuccess: '',
                 messageError: '',
-                isShowModalTransfer: false
+                isShowModalTransfer: false,
+                isLoading: false,
+                bankRecipient: '',
+                emailRecipient: '',
+                fullNameRecipient: ''
             }
         }
         case TOGGLE_MODAL_TRANSFER: {

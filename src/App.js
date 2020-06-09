@@ -10,8 +10,10 @@ import StaffPage from './containers/staff/staff';
 class App extends Component {
   render() {
     return (
-        <Switch>
+        <Switch >
+          {/* <Route exact path='/' component={SignIn}  /> */}
           <Route exact path='/' render={() => <SignIn />} />
+
         {/* <Route path='/signin' render={() => <SignIn />} />
         <Route path='/signup' render={() => <SignUp />} />  */}
           <Route exact path='/dashboard/:type' component={Dashboard} />

@@ -3,9 +3,12 @@ import { Input, Card, Row, Col, Select, Form } from 'antd';
 
 import './internal-remitter.css'
 import { formatBalanceToString } from '../../../../ultis/balance';
+import * as _ from 'lodash';
 
 const Option = Select.Option;
 class InternalRemitter extends Component {
+    formRef = React.createRef();
+
     constructor(props) {
         super(props);
     }
@@ -15,14 +18,23 @@ class InternalRemitter extends Component {
 
         if (userWallets.length === 0) {
             this.props.form.setFieldsValue({
-                'your-balance': '0.00'
+                'balance': '0.00'
             })
         } else {
-            const selectedWallet = userWallets.filter(userWallet => userWallet.walletNumber === value);
+            const selectedWallet = _.filter(userWallets, function (object) {
+                return object.name_saving == value;
+            });
+            if (selectedWallet) {
+                console.log('selectedWallet:', selectedWallet)
+                if (selectedWallet[0].name_saving == "Main Account") {
+                    this.formRef.current.setFieldsValue({ balance: selectedWallet[0].Money })
 
-            this.props.form.setFieldsValue({
-                'your-balance': formatBalanceToString(selectedWallet && selectedWallet[0].balance)
-            })
+                }
+                else
+                    this.formRef.current.setFieldsValue({ balance: selectedWallet[0].spending })
+
+            }
+
         }
     }
 
@@ -42,12 +54,24 @@ class InternalRemitter extends Component {
             return (
                 <Option value=''>Not Wallet</Option>
             );
+        else {
 
-        userWallets.forEach(userWallet => {
-            options.push(
-                <Option value={userWallet.walletNumber}>{userWallet.walletNumber}</Option>
-            )
-        });
+
+            userWallets.forEach((element, index) => {
+                if (index == 0) {
+                    options.push(
+                        <Option value={element.name_saving}>{element.name_saving}</Option>
+                    )
+                }
+
+                else {
+                    options.push(
+                        <Option value={element.name_saving}>{element.name_saving}</Option>
+                    )
+                }
+            });
+        }
+
         return options;
     }
 
@@ -58,35 +82,39 @@ class InternalRemitter extends Component {
                 title="Information Of Remitter"
                 style={{ width: "90%" }}
             >
+                <Form ref={this.formRef}
+                >
 
-                <Form.Item
-                    {...this.props.formItemLayout}
-                    hasFeedback
-                    label="Your Wallet Number:"
-                    name="username"
-                    rules={[
-                        { required: true, message: 'Please select a your wallet!' },
-                    ]}>
+                    <Form.Item
+                        {...this.props.formItemLayout}
+                        hasFeedback
+                        label="Your Wallet Type:"
+                        name="username"
+                        rules={[
+                            { required: true, message: 'Please select a your wallet!' },
+                        ]}>
 
-                    <Select
-                        showSearch
-                        placeholder="Select a your wallet"
-                        optionFilterProp="children"
-                        onChange={this.handleChange}
-                        onFocus={this.handleFocus}
-                        onBlur={this.handleBlur}
-                        filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                    >
-                        {this.userWalletsLayout()}
-                    </Select>
+                        <Select
+                            showSearch
+                            placeholder="Select a your wallet"
+                            optionFilterProp="children"
+                            onChange={this.handleChange}
+                            onFocus={this.handleFocus}
+                            onBlur={this.handleBlur}
+                            filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                        >
+                            {this.userWalletsLayout()}
+                        </Select>
 
-                </Form.Item>
+                    </Form.Item>
 
-                <Form.Item {...this.props.formItemLayout} name="your-balance" label="Balance:">
+                    <Form.Item {...this.props.formItemLayout} name="balance" label="Balance:">
 
-                    <Input addonAfter='VND' disabled="true" />
+                        <Input addonAfter='VND' disabled="true" />
 
-                </Form.Item>
+                    </Form.Item>
+                </Form>
+
             </Card >
 
         )

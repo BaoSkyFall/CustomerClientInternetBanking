@@ -6,6 +6,7 @@ import InternalRemitter from './internal-remitter/internal-remitter';
 import InternalRecipient from './recipient-information/recipient-information';
 import DetailTransfer from './detail-transfer/detail-transfer';
 import ModalTransfer from './modal-transfer/modal-transfer';
+import jwt from 'jwt-decode';
 
 import { ACCESS_TOKEN_KEY, EMAIL_KEY, OTP_EMAIL } from '../../../configs/client';
 import './style.css'
@@ -24,8 +25,11 @@ class InternalTransfer extends React.Component {
 
     componentDidMount() {
         const { accessToken, email } = this.state;
-        this.props.fetchUserWallets(email, accessToken);
-        this.props.fetchRecipients(email, accessToken);
+        let decode = jwt(accessToken);
+
+        this.props.fetchUserWallets(decode.username, accessToken);
+        this.props.fetchRecipientsLocal(decode.username, accessToken);
+        this.props.fetchRecipientsForeign(decode.username, accessToken);
 
         // fetch(`${URL_SERVER}/user/me`, {
         //     headers: {
@@ -70,7 +74,7 @@ class InternalTransfer extends React.Component {
             'message': ''
         })
     }
-
+ 
     render() {
         const { messageError, messageSuccess, isLoading } = this.props;
         

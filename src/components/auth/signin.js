@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import {
-    Form, Input, Button, Checkbox, Spin, Alert
+    Form, Input, Button, Row, Col, Spin, Alert, Card
 } from 'antd';
 import { KeyOutlined, UserOutlined } from '@ant-design/icons';
 import { ACCESS_TOKEN_KEY, EMAIL_KEY } from '../../configs/client';
@@ -19,7 +19,7 @@ class SignInForm extends React.Component {
         this.onFinishFail = this.onFinishFail.bind(this);
 
     }
-    componentDidMount(){
+    componentDidMount() {
 
     }
     componentDidUpdate() {
@@ -97,7 +97,7 @@ class SignInForm extends React.Component {
 
                 <br />
                 <Form
-                    initialValues={{ username: 'baoit128', password: 'baoit128',something:'1234' }}
+                    initialValues={{ username: 'baoit128', password: 'baoit128', something: '1234' }}
                     onFinish={this.onFinish}
                     onFinishFail={this.onFinishFail}
                 >
@@ -142,18 +142,30 @@ class SignInForm extends React.Component {
         // }
 
         return (
-            <Form onSubmit={this.handleSubmit} className="form-signin">
-                <legend className="title-signin">
-                    <h2>Sign In</h2>
-                </legend>
+            <React.Fragment>
+                <Card className="signIn-left">
 
-                {this.props.isLoading && (
-                    <Spin tip="Loading ..." size='large' >
-                        {formLayout}
-                    </Spin>
-                )}
-                {!this.props.isLoading && formLayout}
-            </Form>
+                </Card>
+                <Card>
+                    <Form onSubmit={this.handleSubmit} className="form-signin">
+                        <legend className="title-signin">
+                            <h2>Sign In</h2>
+                        </legend>
+
+                        {this.props.isLoading && (
+                            <Spin tip="LoaSding ..." size='large' >
+                                {formLayout}
+                            </Spin>
+                        )}
+                        {!this.props.isLoading && formLayout}
+                    </Form>
+                </Card>
+
+
+
+
+            </React.Fragment>
+
         );
     }
 }
