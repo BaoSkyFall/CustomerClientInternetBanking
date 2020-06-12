@@ -9,12 +9,14 @@ import {
     FETCH_RECIPIENTS_FOREIGN_SUCCESS,
     FETCH_RECIPIENTS_FOREIGN_FAIL,
     RESET_STORE,
+    SET_BALANCE,
+    SET_VALUES_TRANFER,
     SEND_TRANSFER_INFORMATION,
     SEND_TRANSFER_INFORMATION_SUCCESS,
     SEND_TRANSFER_INFORMATION_FAIL,
-    VERIFY_TRANSACTION,
-    VERIFY_TRANSACTION_SUCCESS,
-    VERIFY_TRANSACTION_FAIL,
+    GET_OTP,
+    GET_OTP_SUCCESS,
+    GET_OTP_FAIL,
     TOGGLE_MODAL_TRANSFER,
     TRACK_RECIPIENT_LOCAL,
     TRACK_RECIPIENT_LOCAL_SUCCESS,
@@ -27,12 +29,14 @@ import {
 const initialState = {
     userWallets: [],
     recipientsLocal: [],
-    recipientsForeign:[],
+    recipientsForeign: [],
     idTransaction: '',
     messageSuccess: '',
+    balance: null,
     messageError: '',
+    values: {},
     isShowModalTransfer: false,
-    isLocal:true,
+    isLocal: true,
     isLoading: false,
     bankRecipient: '',
     emailRecipient: '',
@@ -66,7 +70,7 @@ export default function internalTransferReducer(state = initialState, action) {
                 isLoading: true
             }
         }
-        case VERIFY_TRANSACTION: {
+        case GET_OTP: {
             return {
                 ...state,
                 isLoading: true
@@ -112,6 +116,18 @@ export default function internalTransferReducer(state = initialState, action) {
                 isLoading: false
             }
         }
+        case SET_BALANCE: {
+            return {
+                ...state,
+                balance: action.balance
+            }
+        }
+        case SET_VALUES_TRANFER: {
+            return{
+                ...state,
+                values:action.values
+            }
+        }
         case TRACK_RECIPIENT_FOREIGN_SUCCESS: {
 
             return {
@@ -121,10 +137,11 @@ export default function internalTransferReducer(state = initialState, action) {
                 isLoading: false
             }
         }
-        case VERIFY_TRANSACTION_SUCCESS: {
+        case GET_OTP_SUCCESS: {
             return {
                 ...state,
                 messageSuccess: action.messageSuccess,
+                
                 isLoading: false
             }
         }
@@ -146,7 +163,7 @@ export default function internalTransferReducer(state = initialState, action) {
                 isLoading: false
             }
         }
-        case VERIFY_TRANSACTION_FAIL: {
+        case GET_OTP_FAIL: {
             return {
                 ...state,
                 messageError: action.messageError,
@@ -156,7 +173,6 @@ export default function internalTransferReducer(state = initialState, action) {
         case RESET_STORE: {
             return {
                 ...state,
-                userWallets: [],
                 isLocal: !state.isLocal,
                 idTransaction: '',
                 messageSuccess: '',
@@ -171,7 +187,7 @@ export default function internalTransferReducer(state = initialState, action) {
         case TOGGLE_MODAL_TRANSFER: {
             return {
                 ...state,
-                isShowModalTransfer: action.isShowModalTransfer
+                isShowModalTransfer: !state.isShowModalTransfer
             }
         }
         default:

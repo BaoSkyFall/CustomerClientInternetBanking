@@ -7,9 +7,13 @@ import {
   deleteRecipient,
   resetStore,
   addRecipient,
-  toggleModalAddRecipient
+  toggleModalAddRecipient,
+  changeTabPanel
 } from '../../actions/customer/setup-recipient';
-
+import {
+  trackRecipientLocal,
+  trackRecipientForeign,
+} from '../../actions/customer/internal-tranfer'
 const mapStateToProps = (state) => {
   return {
     isLoading: state.setupRecipientReducer.isLoading,
@@ -17,17 +21,24 @@ const mapStateToProps = (state) => {
     recipients: state.setupRecipientReducer.recipients,
     messageSuccess: state.setupRecipientReducer.messageSuccess,
     messageError: state.setupRecipientReducer.messageError,
+    isLocalAdd: state.setupRecipientReducer.isLocalAdd,
+    bankRecipient: state.internalTransferReducer.bankRecipient,
+    fullNameRecipient: state.internalTransferReducer.fullNameRecipient,
   }
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    fetchRecipients: (email, accessToken) => dispatch(fetchRecipients(email, accessToken)),
+    fetchRecipients: (id, accessToken) => dispatch(fetchRecipients(id, accessToken)),
     addRecipient: (email, receiverWalletNumber, remindName, accessToken) => dispatch(addRecipient(email, receiverWalletNumber, remindName, accessToken)),
     updateRecipient: (email, walletNumber, remindName, accessToken) => dispatch(updateRecipient(email, walletNumber, remindName, accessToken)),
-    deleteRecipient: (email, walletNumber, accessToken) => dispatch(deleteRecipient(email, walletNumber, accessToken)),
+    deleteRecipient: (data, recipients, accessToken) => dispatch(deleteRecipient(data, recipients, accessToken)),
     resetStore: () => dispatch(resetStore()),
-    toggleModalAddRecipient: (isShowModalAddRecipient) => dispatch(toggleModalAddRecipient(isShowModalAddRecipient))
+    toggleModalAddRecipient: (isShowModalAddRecipient) => dispatch(toggleModalAddRecipient(isShowModalAddRecipient)),
+    trackRecipientLocal: (walletNumber, accessToken) => dispatch(trackRecipientLocal(walletNumber, accessToken)),
+    trackRecipientForeign: (walletNumber, accessToken) => dispatch(trackRecipientForeign(walletNumber, accessToken)),
+    changeTabPanel: () => dispatch(changeTabPanel()),
+    
   }
 }
 

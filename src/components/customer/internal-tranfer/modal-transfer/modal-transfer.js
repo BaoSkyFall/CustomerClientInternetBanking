@@ -1,24 +1,72 @@
 import React from 'react';
 import { Modal, Button, Spin, Input, Row, Col } from 'antd';
-import { OTP_EMAIL } from '../../../../configs/client';
+import { OTP_EMAIL, ACCESS_TOKEN_KEY } from '../../../../configs/client';
 import TextArea from 'antd/lib/input/TextArea';
+import OtpInput from 'react-otp-input';
+import Countdown from "react-countdown";
+import OTPEmail from '../otp-email/otp-email';
+import jwt from 'jwt-decode';
 
+import './modal-transfer.css'
 class ModalTransfer extends React.Component {
-    state = { visible: false }
+    countdownRef = React.createRef();
+    inputRef = React.createRef();
+    constructor(props) {
+        super(props);
+        this.state = { visible: false, rendered: null }
+
+    }
+    renderer = ({ minutes, seconds, completed }) => {
+        if (completed) {
+            // Render a complete state
+            return <Button onClick={this.onClickSendOTP} type="primary">
+                Send OTP
+            </Button>;
+        } else {
+            // Render a countdown
+            return (
+                <span>
+                    {minutes}:{seconds}
+                </span>
+            );
+        }
+    };
 
     handleOk = (e) => {
-        const { originWalletNumber, destinationWalletNumber, payBy, amount, message } = this.props.values;
+        const { originWalletNumber, destinationWalletNumber, payBy, amount, message } = this.props.data;
+        let otp = this.inputRef.current.state.value;
+
         const { accessToken, email } = this.props;
-        this.props.sendTransferInformation(email, originWalletNumber, destinationWalletNumber, payBy, amount, message, accessToken);
+        console.log('payBy:', payBy)
+        console.log('amount:', amount)
+        let decode =jwt(accessToken);
+        if (otp) {
+            let data ={
+                otp,
+                from: decode.username,
+                to: destinationWalletNumber,
+                money: amount,
+                content:message,
+                paidBy:payBy == 'sender'? 1:2
+            }
+        }
+        // this.props.sendTransferInformation(data, accessToken);
     }
 
     handleCancel = (e) => {
-        this.props.toggleModalTransfer(false);
+        this.props.toggleModalTransfer();
     }
-
+    onClickSendOTP = (e) => {
+        let accessToken = localStorage.getItem(ACCESS_TOKEN_KEY)
+        let decode = jwt(accessToken);
+        const { getOTP } = this.props;
+        getOTP(decode.email, accessToken);
+    }
     render() {
-        const { originWalletNumber, destinationWalletNumber, payBy, amount, message } = this.props.values;
+        const { originWalletNumber, destinationWalletNumber, payBy, amount, message } = this.props.data;
         const { isLoading } = this.props;
+        console.log('this.props: ', this.props);
+
 
         const contentLayout = (
             <React.Fragment>
@@ -40,10 +88,22 @@ class ModalTransfer extends React.Component {
                 </Row>
                 <Row>
                     <Col span={12}>Message:</Col>
-                    <Col span={12}><TextArea disabled>{message}</TextArea></Col>
+                    <Col span={12}><TextArea disabled value={message}>{message}</TextArea></Col>
                 </Row>
-            </React.Fragment>
+                <Row>
+                    <Col span={12}>OTP:</Col>
+
+                    <Col span={6}><Input ref={this.inputRef}  ></Input></Col>
+                    <Col span={6}>
+                        {/* <Countdown ref={this.countdownRef} date={Date.now() + 3000} renderer={this.renderer} />, */}
+                        <Button onClick={this.onClickSendOTP} type="primary">
+                            Send OTP
+            </Button>
+                    </Col>
+                </Row>
+            </React.Fragment >
         )
+        console.log('isLoading:123', this.props.isShowModalTransfer)
 
         return (
             <div>
@@ -54,12 +114,13 @@ class ModalTransfer extends React.Component {
                     onCancel={this.handleCancel}
                 >
                     {isLoading && (
-                    <Spin tip="Loading ..." size='large'>
-                        {contentLayout}
-                    </Spin>
+                        <Spin tip="Loading ..." size='large'>
+                            {contentLayout}
+                        </Spin>
                     )}
 
                     {!isLoading && contentLayout}
+
                 </Modal>
             </div>
         );

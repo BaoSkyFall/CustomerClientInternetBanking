@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import OtpInput from 'react-otp-input';
-import { Form, Button, Spin, notification, Icon } from 'antd';
-
+import { Form, Button, Spin, notification } from 'antd';
+import {WarningOutlined,InfoCircleOutlined,PlusOutlined} from '@ant-design/icons';
 import './otp-email.css';
 import { ACCESS_TOKEN_KEY, EMAIL_KEY, MENUITEM } from '../../../../configs/client';
 
@@ -56,8 +56,7 @@ class OTPEmail extends Component {
             },
         };
 
-        const { getFieldDecorator } = this.props.form;
-
+        console.log('isLoadin12321g:', isLoading)
         const contentLayout = (
 
             <Form className='otp-email' onSubmit={this.handleSubmit}>
@@ -94,13 +93,13 @@ class OTPEmail extends Component {
                 {messageError ?
                     notification.open({
                         message: messageError,
-                        icon: <Icon type="warning" style={{ color: 'red' }} />,
+                        icon:  <WarningOutlined style={{ color: 'red' }} />,
                     }) : null}
 
                 {messageSuccess ?
                     notification.open({
                         message: messageSuccess,
-                        icon: <Icon type="info" style={{ color: 'blue' }} />,
+                        icon: <InfoCircleOutlined style={{ color: 'blue' }} />,
                     }) : null}
 
                 {messageSuccess ?
@@ -121,4 +120,4 @@ class OTPEmail extends Component {
     }
 }
 
-export default Form.create()(OTPEmail);
+export default OTPEmail;

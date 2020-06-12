@@ -3,7 +3,9 @@ import { Table,Spin, notification, Popconfirm } from 'antd';
 import {WarningOutlined} from '@ant-design/icons';
 import { Redirect } from 'react-router-dom';
 import { formatWallet } from '../../../ultis/wallet';
-import { ACCESS_TOKEN_KEY, EMAIL_KEY } from '../../../configs/client'
+import { ACCESS_TOKEN_KEY, EMAIL_KEY } from '../../../configs/client';
+import jwt from 'jwt-decode';
+
 class PaymentAccounts extends Component {
     
     constructor(props) {
@@ -15,22 +17,27 @@ class PaymentAccounts extends Component {
 
         }
     }
-
+    componentDidMount = ()=>{
+        const { accessToken, email } = this.state;
+        let decode = jwt(accessToken);
+        const {fetchPaymentAccounts}= this.props;
+        fetchPaymentAccounts(decode.userId)
+    }
     render() {
-        const { messageError, isLoading } = this.props;
+        const { messageError, isLoading,paymentAccounts } = this.props;
 
         const columns = [{
-            title: 'User\'s Wallet Number',
-            dataIndex: 'walletNumber',
-            width: '30%',
-            sorter: (a, b) => a.walletNumber.localeCompare(b.walletNumber),
+            title: 'User\'s Wallet Name',
+            dataIndex: 'name_saving',
+            width: "30%",
+            sorter: (a, b) => a.name_saving.localeCompare(b.name_saving),
         }, {
             title: 'Current Balance (VND)',
-            dataIndex: 'balance',
-            width: '40%',
-            className: 'column-money',
+            dataIndex: 'spending',
+            className: 'column-balance',
+
             defaultSortOrder: 'descend',
-            sorter: (a, b) => a.balance - b.balance,
+            sorter: (a, b) => a.spending - b.spending,
         }];
 
         if (messageError === 'AccessToken is not valid') {
@@ -56,7 +63,7 @@ class PaymentAccounts extends Component {
 
                 <Table
                     columns={columns}
-                    dataSource={formatWallet(this.props.paymentAccounts)}
+                    dataSource={paymentAccounts}
                     pagination={{ pageSize: 10 }}
                     scroll={{ y: '60vh' }}
                     bordered />

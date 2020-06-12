@@ -12,13 +12,14 @@ class DetailTransfer extends Component {
     }
 
     compareToYourBalance = (rule, value, callback) => {
-        const form = this.props.form;
-        const yourBalance = form.getFieldValue('your-balance');
-
+        const {balance}= this.props
+        // const form = this.props.form;
+        // const yourBalance = form.getFieldValue('your-balance');
+        console.log('balance:', typeof balance)
         value = parseInt(value);
-        if (yourBalance) {
-            if (value && (value > formatBalanceToInt(yourBalance))) {
-                callback(`The shipping amount must be less than ${yourBalance}`);
+        if (balance) {
+            if (value && (value > formatBalanceToInt(balance))) {
+                callback(`The shipping amount must be less than ${balance}`);
             } else {
                 callback();
             }

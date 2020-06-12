@@ -6,7 +6,10 @@ import {
   fetchRecipientsLocal,
   fetchRecipientsForeign,
   sendTransferInformation,
-  verifyTransaction,
+  getOTP,
+  setBalance,
+  setValuesTranfer,
+  // toggleModalAddRecipient,
   toggleModalTransfer,
   trackRecipientLocal,
   trackRecipientForeign,
@@ -38,7 +41,9 @@ const mapStateToProps = (state) => {
       isLocal: state.internalTransferReducer.isLocal,
       recipientsLocal: state.internalTransferReducer.recipientsLocal,
       recipientsForeign: state.internalTransferReducer.recipientsForeign,
+      balance: state.internalTransferReducer.balance,     
       idTransaction: state.internalTransferReducer.idTransaction,
+      values: state.internalTransferReducer.values,
       emailRecipient: state.internalTransferReducer.emailRecipient,
       fullNameRecipient: state.internalTransferReducer.fullNameRecipient,
       bankRecipient: state.internalTransferReducer.bankRecipient,
@@ -49,17 +54,21 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    fetchUserWallets: (email, accessToken) => dispatch(fetchUserWallets(email, accessToken)),
+    fetchUserWallets: (id, accessToken) => dispatch(fetchUserWallets(id, accessToken)),
     fetchRecipientsLocal: (email, accessToken) => dispatch(fetchRecipientsLocal(email, accessToken)),
     fetchRecipientsForeign: (email, accessToken) => dispatch(fetchRecipientsForeign(email, accessToken)),
     sendTransferInformation: (email, originWalletNumber, destinationWalletNumber, payBy, amount, message, accessToken) => {
       return dispatch(sendTransferInformation(email, originWalletNumber, destinationWalletNumber, payBy, amount, message, accessToken));
     },
-    toggleModalTransfer: (isShowModalTransfer) => dispatch(toggleModalTransfer(isShowModalTransfer)),
-    toggleModalAddRecipient: (isShowModalAddRecipient) => dispatch(toggleModalAddRecipient(isShowModalAddRecipient)),
+    toggleModalTransfer: () => dispatch(toggleModalTransfer()),
+    toggleModalAddRecipient: () => dispatch(toggleModalAddRecipient()),
     addRecipient: (email, receiverWalletNumber, remindName, accessToken) => dispatch(addRecipient(email, receiverWalletNumber, remindName, accessToken)),
     trackRecipientLocal: (walletNumber, accessToken) => dispatch(trackRecipientLocal(walletNumber, accessToken)),
     trackRecipientForeign: (walletNumber, accessToken) => dispatch(trackRecipientForeign(walletNumber, accessToken)),
+    setBalance: (balance) => dispatch(setBalance(balance)),
+    setValuesTranfer:(values) =>dispatch(setValuesTranfer(values)),
+    getOTP:(email,accessToken) =>dispatch(getOTP(email,accessToken)),
+    
     resetStore: () => dispatch(resetStore())
   }
 }

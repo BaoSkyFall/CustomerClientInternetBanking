@@ -7,17 +7,18 @@ import {
     RESET_STORE
 } from '../../constants/customer/payment-accounts';
 import { URL_SERVER, URL_SERVER_DEPLOY } from '../../configs/server';
+import callApi from '../../ultis/callApi';
 
-const fetchPaymentAccounts = (email, accessToken) => {
+const fetchPaymentAccounts = (id, accessToken) => {
     return (dispatch) => {
         dispatch({ type: FETCH_PAYMENT_ACCOUNTS });
 
-        return axios.post(URL_SERVER_DEPLOY,{})
+        return callApi(`api/moneyAccount/${id}`, 'GET', {}, { x_accessToken: accessToken })
         .then(res => {
             if (!res.data.errors) {
                 dispatch({
                     type: FETCH_PAYMENT_ACCOUNTS_SUCCESS,
-                    paymentAccounts: res.data.data.wallets
+                    paymentAccounts: res.data.data.data
                 });
             }
             else {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Input, Card, Select, Form, Button, Tabs } from 'antd';
-import { UsergroupAddOutlined,RetweetOutlined, InteractionFilled, BankOutlined } from '@ant-design/icons';
+import { UsergroupAddOutlined, RetweetOutlined, InteractionFilled, BankOutlined } from '@ant-design/icons';
 import './recipient-information.css'
 const Option = Select.Option;
 const { TabPane } = Tabs;
@@ -86,10 +86,10 @@ class Recipient extends Component {
                 title="Information Of Recipient"
                 style={{ width: "90%" }}
             >
-                <Tabs onChange={()=>{
+                <Tabs onChange={() => {
                     this.props.resetStore();
                 }}
-                 ref={this.tabsRef} defaultActiveKey="1">
+                    ref={this.tabsRef} defaultActiveKey="1">
                     <TabPane
                         tab={
                             <span>
@@ -104,6 +104,8 @@ class Recipient extends Component {
                             ]}>
 
                                 <Select
+                                    showSearch={true}
+                                    showArrow={false}
                                     mode='combobox'
                                     placeholder="Select a recipient wallet"
                                     onChange={this.handleChange}
@@ -131,7 +133,8 @@ class Recipient extends Component {
 
                             <Form.Item {...this.props.formItemLayout} label="Recipient's Full Name:">
                                 <Input type='text' disabled="true" value={fullNameRecipient} />
-                            </Form.Item></div>                       </TabPane>
+                            </Form.Item></div>                       
+                            </TabPane>
                     <TabPane
                         tab={
                             <span>

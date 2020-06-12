@@ -177,6 +177,9 @@ class DebtReminder extends React.Component {
         console.log('this.props hanldeok:', this.props);
 
         this.props.addDebtReminder(dt, accessToken);
+        this.setState({
+            confirmLoading: false,
+        });
     }
 
     render() {

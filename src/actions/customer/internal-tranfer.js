@@ -10,13 +10,16 @@ import {
     FETCH_RECIPIENTS_FOREIGN_SUCCESS,
     FETCH_RECIPIENTS_FOREIGN_FAIL,
     RESET_STORE,
+    SET_BALANCE,
+    SET_VALUES_TRANFER,
     SEND_TRANSFER_INFORMATION,
     SEND_TRANSFER_INFORMATION_SUCCESS,
     SEND_TRANSFER_INFORMATION_FAIL,
-    VERIFY_TRANSACTION,
-    VERIFY_TRANSACTION_SUCCESS,
-    VERIFY_TRANSACTION_FAIL,
+    GET_OTP,
+    GET_OTP_SUCCESS,
+    GET_OTP_FAIL,
     TOGGLE_MODAL_TRANSFER,
+    TOGGLE_MODAL_ADD_RECIPIENT,
     TRACK_RECIPIENT_LOCAL,
     TRACK_RECIPIENT_LOCAL_SUCCESS,
     TRACK_RECIPIENT_LOCAL_FAIL,
@@ -28,13 +31,13 @@ import { ACCESS_TOKEN_KEY } from '../../configs/client';
 import { URL_SERVER, URL_SERVER_DEPLOY } from '../../configs/server';
 import callApi from '../../ultis/callApi';
 
-const fetchUserWallets = (username, accessToken) => {
+const fetchUserWallets = (id, accessToken) => {
     return (dispatch) => {
         dispatch({ type: FETCH_USER_WALLETS });
         let accessToken = localStorage.getItem(ACCESS_TOKEN_KEY)
-        return callApi(`api/moneyAccount/${username}`, 'GET', {}, { x_accessToken: accessToken })
+        return callApi(`api/moneyAccount/${id}`, 'GET', {}, { x_accessToken: accessToken })
             .then(res => {
-                console.log('res:', res)
+                console.log('res moneyAccount:', res)
                 if (!res.data.errors) {
                     dispatch({
                         type: FETCH_USER_WALLETS_SUCCESS,
@@ -58,11 +61,11 @@ const fetchUserWallets = (username, accessToken) => {
 }
 
 
-const fetchRecipientsLocal = (username, accessToken) => {
+const fetchRecipientsLocal = (id, accessToken) => {
     return (dispatch) => {
         dispatch({ type: FETCH_RECIPIENTS_LOCAL });
 
-        return callApi(`api/recipient/getRecipientLocal/${username}`, 'GET', {}, { x_accessToken: accessToken })
+        return callApi(`api/recipient/getRecipientLocal/${id}`, 'GET', {}, { x_accessToken: accessToken })
             .then(res => {
                 if (!res.data.errors) {
                     dispatch({
@@ -85,6 +88,7 @@ const fetchRecipientsLocal = (username, accessToken) => {
             })
     }
 }
+
 const trackRecipientLocal = (walletNumber, accessToken) => {
     return (dispatch) => {
         dispatch({
@@ -117,11 +121,11 @@ const trackRecipientLocal = (walletNumber, accessToken) => {
             })
     }
 }
-const fetchRecipientsForeign = (username, accessToken) => {
+const fetchRecipientsForeign = (id, accessToken) => {
     return (dispatch) => {
         dispatch({ type: FETCH_RECIPIENTS_FOREIGN });
 
-        return callApi(`api/recipient/getRecipientForeign/${username}`, 'GET', {}, { x_accessToken: accessToken })
+        return callApi(`api/recipient/getRecipientForeign/${id}`, 'GET', {}, { x_accessToken: accessToken })
             .then(res => {
                 if (!res.data.errors) {
                     dispatch({
@@ -176,14 +180,14 @@ const trackRecipientForeign = (walletNumber, accessToken) => {
             })
     }
 }
-const sendTransferInformation = (email, originWalletNumber, destinationWalletNumber, payBy, amount, message, accessToken) => {
+const sendTransferInformation = (data, accessToken) => {
     return (dispatch) => {
         dispatch({
             type: SEND_TRANSFER_INFORMATION
         });
-
-        axios.post(URL_SERVER_DEPLOY, {})
+        return callApi(`api/money/transferLocal`, 'POST', data, { x_accessToken: accessToken })
             .then(res => {
+                console.log('res Tranfer Money:', res)
                 if (!res.data.errors) {
                     dispatch({
                         type: SEND_TRANSFER_INFORMATION_SUCCESS,
@@ -204,38 +208,65 @@ const sendTransferInformation = (email, originWalletNumber, destinationWalletNum
     }
 }
 
-const verifyTransaction = (email, id, OTP, accessToken) => {
+const getOTP = (email, accessToken) => {
     return (dispatch) => {
         dispatch({
-            type: VERIFY_TRANSACTION
+            type: GET_OTP
         });
 
-        axios.post(URL_SERVER_DEPLOY, {})
+        return callApi(`api/users/getOTP`, 'POST', { email, accessToken }, { x_accessToken: accessToken })
             .then(res => {
+                console.log('resOTP:', res)
                 if (!res.data.errors) {
                     dispatch({
-                        type: VERIFY_TRANSACTION_SUCCESS,
-                        messageSuccess: res.data.data.verified_transaction.message
+                        type: GET_OTP_SUCCESS,
+                        messageSuccess: res.data.data.message
                     });
                 }
                 else {
                     dispatch({
-                        type: VERIFY_TRANSACTION_FAIL,
-                        messageError: res.data.errors[0].message
+                        type: GET_OTP_FAIL,
+                        messageError: res.data.data.message
                     });
                 }
             })
             .catch(error => {
                 console.log(error);
+                dispatch({
+                    type: GET_OTP_FAIL,
+                    messageError: "Can't send OTP it may cause from server"
+                });
             })
     }
 }
 
-const toggleModalTransfer = (isShowModalTransfer) => {
+const toggleModalTransfer = () => {
     return (dispatch) => {
         dispatch({
             type: TOGGLE_MODAL_TRANSFER,
-            isShowModalTransfer
+        });
+    }
+}
+const toggleModalAddRecipient = () => {
+    return (dispatch) => {
+        dispatch({
+            type: TOGGLE_MODAL_ADD_RECIPIENT,
+        });
+    }
+}
+const setBalance = (balance) => {
+    return (dispatch) => {
+        dispatch({
+            type: SET_BALANCE,
+            balance
+        });
+    }
+}
+const setValuesTranfer = (values) => {
+    return (dispatch) => {
+        dispatch({
+            type: SET_VALUES_TRANFER,
+            values
         });
     }
 }
@@ -253,10 +284,12 @@ export {
     fetchRecipientsLocal,
     fetchRecipientsForeign,
     sendTransferInformation,
-    verifyTransaction,
+    getOTP,
     toggleModalTransfer,
     trackRecipientLocal,
     trackRecipientForeign,
-
+    toggleModalAddRecipient,
+    setBalance,
+    setValuesTranfer,
     resetStore
 }
