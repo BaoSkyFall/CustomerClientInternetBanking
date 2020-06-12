@@ -12,11 +12,32 @@ const { Sider } = Layout;
 
 class SiderPage extends Component {
     render() {
+        let pathname = window.location.pathname;
+        pathname = pathname.substring(pathname.lastIndexOf('/') + 1);
+        let defaultKey = '';
+        switch (pathname) {
+            case 'register':
+                defaultKey = '1'
+                break;
+            case 'payment':
+                defaultKey = '2'
+
+                // code block
+                break;
+            case 'recharge':
+                defaultKey = '3'
+
+                break;
+
+                defaultKey = '1'
+                break;
+
+        }
         return (
             <Sider width={200} style={{ background: '#fff' }}>
                 <Menu
                     mode="inline"
-                    defaultSelectedKeys={['1']}
+                    defaultSelectedKeys={defaultKey}
                     defaultOpenKeys={['sub1']}
                     style={{ height: '100%', borderRight: 0 }}
                 >

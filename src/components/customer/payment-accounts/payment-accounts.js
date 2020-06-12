@@ -1,30 +1,30 @@
 import React, { Component } from 'react';
-import { Table,Spin, notification, Popconfirm } from 'antd';
-import {WarningOutlined} from '@ant-design/icons';
+import { Table, Spin, notification, Popconfirm } from 'antd';
+import { WarningOutlined } from '@ant-design/icons';
 import { Redirect } from 'react-router-dom';
 import { formatWallet } from '../../../ultis/wallet';
 import { ACCESS_TOKEN_KEY, EMAIL_KEY } from '../../../configs/client';
 import jwt from 'jwt-decode';
 
 class PaymentAccounts extends Component {
-    
+
     constructor(props) {
         super(props);
         this.state = {
-            accessToken : localStorage.getItem(ACCESS_TOKEN_KEY),
-            email : localStorage.getItem(EMAIL_KEY)
+            accessToken: localStorage.getItem(ACCESS_TOKEN_KEY),
+            email: localStorage.getItem(EMAIL_KEY)
 
 
         }
     }
-    componentDidMount = ()=>{
+    componentDidMount = () => {
         const { accessToken, email } = this.state;
         let decode = jwt(accessToken);
-        const {fetchPaymentAccounts}= this.props;
+        const { fetchPaymentAccounts } = this.props;
         fetchPaymentAccounts(decode.userId)
     }
     render() {
-        const { messageError, isLoading,paymentAccounts } = this.props;
+        const { messageError, isLoading, paymentAccounts } = this.props;
 
         const columns = [{
             title: 'User\'s Wallet Name',
@@ -37,6 +37,14 @@ class PaymentAccounts extends Component {
             className: 'column-balance',
 
             defaultSortOrder: 'descend',
+            render: values => (
+
+                <span className="table-operation">
+                    {values.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                    } đ
+                </span>
+
+            ),
             sorter: (a, b) => a.spending - b.spending,
         }];
 
@@ -58,7 +66,7 @@ class PaymentAccounts extends Component {
                 {messageError ?
                     notification.open({
                         message: messageError,
-                        icon: <WarningOutlined style={'color:red'}/>,
+                        icon: <WarningOutlined style={'color:red'} />,
                     }) : null}
 
                 <Table

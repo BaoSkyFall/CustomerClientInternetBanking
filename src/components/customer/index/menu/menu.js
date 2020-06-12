@@ -16,9 +16,14 @@ import { MENUITEM } from '../../../../configs/client';
 import './menu.css';
 
 class MenuLeft extends React.Component {
-    state = {
-        collapsed: false,
+    constructor(props, context) {
+        super(props, context);
+        this.state = {
+            collapsed: false,
+        }
+
     }
+
 
     toggleCollapsed = () => {
         this.props.updateCollapse(!this.state.collapsed);
@@ -28,10 +33,40 @@ class MenuLeft extends React.Component {
     }
 
     render() {
+        let pathname = window.location.pathname;
+        pathname = pathname.substring(pathname.lastIndexOf('/') + 1);
+        let defaultKey = '';
+        switch (pathname) {
+            case MENUITEM.PAYMENT_ACCOUNTS:
+                defaultKey = '1'
+                break;
+            case MENUITEM.INTERNAL_TRANSFER:
+                defaultKey = '2'
+
+                // code block
+                break;
+            case MENUITEM.DEBT_REMINDER:
+                defaultKey = '3'
+
+                break;
+            case MENUITEM.SAVING:
+                defaultKey = '4'
+                break;
+            case MENUITEM.SETUP_RECIPIENT:
+                defaultKey = '5'
+                break;
+            case MENUITEM.TRANSACTION_HISTORY:
+                defaultKey = '6'
+                break;
+            default:
+                defaultKey = '1'
+                break;
+
+        }
+        console.log('defaultKey:', defaultKey)
         return (
             <Menu
-                defaultSelectedKeys={['1']}
-                defaultOpenKeys={['sub1']}
+                defaultSelectedKeys={defaultKey}
                 mode="inline"
                 theme="dark"
                 inlineCollapsed={this.state.collapsed}
@@ -54,7 +89,7 @@ class MenuLeft extends React.Component {
                         <span>Debt Reminder</span>
                     </Link>          </Menu.Item>
                 <Menu.Item key="4" icon={<DollarCircleOutlined />}>
-                    <Link to={MENUITEM.TRANSACTION_HISTORY} >
+                    <Link to={MENUITEM.SAVING} >
                         <span>Saving</span>
                     </Link>
                 </Menu.Item>
