@@ -95,6 +95,8 @@ class InternalTransfer extends React.Component {
     render() {
         const { messageError, messageSuccess, isLoading } = this.props;
         console.log('props123: ', this.props.values);
+        console.log('messageError:', messageError)
+        console.log('messageSuccess:', messageSuccess);
         const formItemLayout = {
             labelCol: {
                 xs: { span: 24 },
@@ -115,7 +117,7 @@ class InternalTransfer extends React.Component {
 
         const contentLayout = (
             <React.Fragment>
-                {messageError ?
+                {/* {messageError ?
                     notification.open({
                         message: messageError,
                         icon: <WarningOutlined style={{ color: 'red' }} />,
@@ -125,15 +127,11 @@ class InternalTransfer extends React.Component {
                     notification.open({
                         message: messageSuccess,
                         icon: <InfoCircleOutlined style={{ color: 'blue' }} />,
-                    }) : null}
+                    }) : null} */}
 
-                {messageSuccess ? (
-                    <Redirect to={{
-                        pathname: OTP_EMAIL,
-                    }} />
-                ) : null}
+         
 
-                {messageSuccess || messageError ? this.props.resetStore() : null}
+                {/* {messageSuccess || messageError ? this.props.resetStore() : null} */}
 
                 <Row>
                     <InternalRemitter {...this.props} setBalanceUserWallet={this.setBalanceUserWallet} formItemLayout={formItemLayout} />

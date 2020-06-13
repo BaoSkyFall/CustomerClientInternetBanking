@@ -44,10 +44,11 @@ class ModalTransfer extends React.Component {
             let data = {
                 otp,
                 email: decode.email,
-                from: decode.username,
+                from: originWalletNumber,
                 to: destinationWalletNumber,
                 money: amount,
-                content: message,
+                isSaving: originWalletNumber/ 1600000> 1?true: false,
+                description: message,
                 paidBy: payBy == 'sender' ? 1 : 2
             }
             console.log('data:', data);
@@ -58,6 +59,7 @@ class ModalTransfer extends React.Component {
 
     handleCancel = (e) => {
         this.props.toggleModalTransfer();
+        this.props.resetStore();
     }
     onClickSendOTP = (e) => {
         let accessToken = localStorage.getItem(ACCESS_TOKEN_KEY)

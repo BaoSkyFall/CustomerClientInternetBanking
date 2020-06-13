@@ -187,11 +187,11 @@ const sendTransferInformation = (data, accessToken) => {
         });
         return callApi(`api/money/transferLocal`, 'POST', data, { x_accessToken: accessToken })
             .then(res => {
-                console.log('res Tranfer Money:', res)
+                console.log('res Tranfer Money:', res.data.message)
                 if (!res.data.errors) {
                     dispatch({
                         type: SEND_TRANSFER_INFORMATION_SUCCESS,
-                        idTransaction: res.data.data.created_verification._id,
+                        // idTransaction: res.data.data.created_verification._id,
                         messageSuccess: res.data.message
                     });
                 }

@@ -95,7 +95,7 @@ class InternalRemitter extends Component {
                 title="Information Of Remitter"
                 style={{ width: "90%" }}
             >
-                >
+                
                 {messageError ?
                     notification.open({
                         message: messageError,
