@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Input, Card, Row, Col, Select, Form } from 'antd';
+import { Input, Card, Row, notification, Select, Form, InputNumber } from 'antd';
 
 import './internal-remitter.css'
 import { formatBalanceToString } from '../../../../ultis/balance';
 import * as _ from 'lodash';
+import { WarningOutlined, InfoCircleOutlined, SendOutlined, CloseCircleOutlined } from '@ant-design/icons';
 
 const Option = Select.Option;
 class InternalRemitter extends Component {
@@ -25,8 +26,7 @@ class InternalRemitter extends Component {
                     return object.Number == value;
 
                 }
-                else
-                {
+                else {
                     return object.id_saving == value
                 }
             });
@@ -88,14 +88,27 @@ class InternalRemitter extends Component {
     }
 
     render() {
-
+        const { messageSuccess, messageError } = this.props;
         return (
+
             <Card
                 title="Information Of Remitter"
                 style={{ width: "90%" }}
             >
                 >
+                {messageError ?
+                    notification.open({
+                        message: messageError,
+                        icon: <WarningOutlined style={{ color: 'red' }} />,
+                    }) : null
 
+                }{
+
+                    messageSuccess ?
+                        notification.open({
+                            message: messageSuccess,
+                            icon: <InfoCircleOutlined style={{ color: 'blue' }} />,
+                        }) : null}
                 <Form.Item
                     {...this.props.formItemLayout}
                     hasFeedback
@@ -122,8 +135,10 @@ class InternalRemitter extends Component {
 
                 <Form.Item {...this.props.formItemLayout} name="balance" label="Balance:">
 
-                    <Input addonAfter='VND' disabled="true" />
+                    {/* <Input addonAfter='VND' disabled="true" /> */}
 
+                    <InputNumber formatter={value => `đ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        parser={value => value.replace(/\đ\s?|(,*)/g, '')} />
                 </Form.Item>
 
             </Card >

@@ -103,6 +103,7 @@ export default function internalTransferReducer(state = initialState, action) {
                 ...state,
                 idTransaction: action.idTransaction,
                 messageSuccess: action.messageSuccess,
+                messageError: '',
                 isLoading: false
             }
         }
@@ -141,7 +142,7 @@ export default function internalTransferReducer(state = initialState, action) {
             return {
                 ...state,
                 messageSuccess: action.messageSuccess,
-                
+                messageError:'',
                 isLoading: false
             }
         }
@@ -160,6 +161,8 @@ export default function internalTransferReducer(state = initialState, action) {
         case SEND_TRANSFER_INFORMATION_FAIL: {
             return {
                 ...state,
+                messageSuccess: '',
+                messageError: action.messageSuccess,
                 isLoading: false
             }
         }
@@ -167,6 +170,7 @@ export default function internalTransferReducer(state = initialState, action) {
             return {
                 ...state,
                 messageError: action.messageError,
+                messageSuccess: '',
                 isLoading: false
             }
         }

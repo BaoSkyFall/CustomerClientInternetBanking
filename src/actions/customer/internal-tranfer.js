@@ -192,13 +192,13 @@ const sendTransferInformation = (data, accessToken) => {
                     dispatch({
                         type: SEND_TRANSFER_INFORMATION_SUCCESS,
                         idTransaction: res.data.data.created_verification._id,
-                        messageSuccess: `Verification email is sent!`
+                        messageSuccess: res.data.message
                     });
                 }
                 else {
                     dispatch({
                         type: SEND_TRANSFER_INFORMATION_FAIL,
-                        messageError: res.data.errors[0].message
+                        messageError: res.data.message
                     });
                 }
             })

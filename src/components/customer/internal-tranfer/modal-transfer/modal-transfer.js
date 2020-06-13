@@ -39,18 +39,21 @@ class ModalTransfer extends React.Component {
         const { accessToken, email } = this.props;
         console.log('payBy:', payBy)
         console.log('amount:', amount)
-        let decode =jwt(accessToken);
+        let decode = jwt(accessToken);
         if (otp) {
-            let data ={
+            let data = {
                 otp,
+                email: decode.email,
                 from: decode.username,
                 to: destinationWalletNumber,
                 money: amount,
-                content:message,
-                paidBy:payBy == 'sender'? 1:2
+                content: message,
+                paidBy: payBy == 'sender' ? 1 : 2
             }
+            console.log('data:', data);
+            this.props.sendTransferInformation(data, accessToken);
+
         }
-        // this.props.sendTransferInformation(data, accessToken);
     }
 
     handleCancel = (e) => {

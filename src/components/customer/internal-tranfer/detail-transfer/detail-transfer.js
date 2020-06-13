@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Input, Card, Row, Col, DatePicker, Select, Form } from 'antd';
+import { Input, Card, Row, Col, DatePicker, Select, Form,InputNumber } from 'antd';
 import './detail-transfer.css'
 import { formatBalanceToInt } from '../../../../ultis/balance';
 
@@ -12,7 +12,7 @@ class DetailTransfer extends Component {
     }
 
     compareToYourBalance = (rule, value, callback) => {
-        const {balance}= this.props
+        const { balance } = this.props
         // const form = this.props.form;
         // const yourBalance = form.getFieldValue('your-balance');
         console.log('balance:', typeof balance)
@@ -43,7 +43,8 @@ class DetailTransfer extends Component {
                     { validator: this.compareToYourBalance }
                 ]}>
 
-                    <Input type='number' addonAfter='VND' />
+                    <InputNumber formatter={value => `đ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                    parser={value => value.replace(/\đ\s?|(,*)/g, '')} />
 
                 </Form.Item>
 
