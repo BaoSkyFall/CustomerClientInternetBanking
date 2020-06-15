@@ -97,7 +97,7 @@ class SignInForm extends React.Component {
 
                 <br />
                 <Form
-                    initialValues={{ username: 'baoit128', password: 'baoit128', something: '1234' }}
+                    initialValues={{ username: 'phanhaibinh', password: 'phanhaibinh', something: '1234' }}
                     onFinish={this.onFinish}
                     onFinishFail={this.onFinishFail}
                 >

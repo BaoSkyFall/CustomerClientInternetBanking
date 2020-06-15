@@ -1,27 +1,29 @@
 import axios from 'axios';
 import {
-    FETCH_TRANSACTION_HISTORY,
-    FETCH_TRANSACTION_HISTORY_SUCCESS,
-    FETCH_TRANSACTION_HISTORY_FAIL,
+    FETCH_TRANSACTION_HISTORY_LOCAL,
+    FETCH_TRANSACTION_HISTORY_LOCAL_SUCCESS,
+    FETCH_TRANSACTION_HISTORY_LOCAL_FAIL,
     RESET_STORE
 } from '../../constants/customer/transaction-history';
 import { URL_SERVER_DEPLOY } from '../../configs/server';
+import callApi from '../../ultis/callApi';
 
-const fetchTransactionHistory = (email, accessToken) => {
+const fetchTransactionHistoryLocal = (id, accessToken) => {
     return (dispatch) => {
-        dispatch({ type: FETCH_TRANSACTION_HISTORY });
-        return axios.post(URL_SERVER_DEPLOY, {})
+        dispatch({ type: FETCH_TRANSACTION_HISTORY_LOCAL });
+        return callApi(`api/money/historyLocal/${id}`, 'GET', {}, { x_accessToken: accessToken })
         .then(res => {
-            if (res.status === 200) {
+            console.log('res:', res)
+            if (res.data.returnCode == 1) {
                 dispatch({
-                    type: FETCH_TRANSACTION_HISTORY_SUCCESS,
-                    transactionHistory: res.data.data.histories
+                    type: FETCH_TRANSACTION_HISTORY_LOCAL_SUCCESS,
+                    transactionHistory: res.data.data
                 });
             }
         })
         .catch(error => {
             dispatch({
-                type: FETCH_TRANSACTION_HISTORY_FAIL,
+                type: FETCH_TRANSACTION_HISTORY_LOCAL_FAIL,
                 messageError: "Server's error"
             });
         })
@@ -37,6 +39,6 @@ const resetStore = () => {
 }
 
 export {
-    fetchTransactionHistory,
+    fetchTransactionHistoryLocal,
     resetStore
 }

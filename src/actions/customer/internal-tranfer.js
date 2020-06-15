@@ -29,7 +29,9 @@ import {
 } from '../../constants/customer/internal-tranfer';
 import { ACCESS_TOKEN_KEY } from '../../configs/client';
 import { URL_SERVER, URL_SERVER_DEPLOY } from '../../configs/server';
+import jwt from 'jwt-decode';
 import callApi from '../../ultis/callApi';
+const firebase = require("firebase");
 
 const fetchUserWallets = (id, accessToken) => {
     return (dispatch) => {
@@ -180,6 +182,19 @@ const trackRecipientForeign = (walletNumber, accessToken) => {
             })
     }
 }
+function pushNotificationFireBase(string, doc) {
+    firebase
+        .firestore()
+        .collection('users')
+        .doc(doc)
+        .update({
+            notifications: firebase.firestore.FieldValue.arrayUnion({
+                content: string,
+
+            }),
+            isRead: false
+        })
+}
 const sendTransferInformation = (data, accessToken) => {
     return (dispatch) => {
         dispatch({
@@ -189,6 +204,9 @@ const sendTransferInformation = (data, accessToken) => {
             .then(res => {
                 console.log('res Tranfer Money:', res.data.message)
                 if (!res.data.errors) {
+                    let decoded = jwt(accessToken);
+                    console.log('data:', data);
+                    pushNotificationFireBase(`Tranfer money success to `, `${decoded.username}@gmail.com`);
                     dispatch({
                         type: SEND_TRANSFER_INFORMATION_SUCCESS,
                         // idTransaction: res.data.data.created_verification._id,

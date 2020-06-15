@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Button, Spin, Input, Row, Col } from 'antd';
+import { Modal, Button, Spin, Input, Row, InputNumber,Col } from 'antd';
 import { OTP_EMAIL, ACCESS_TOKEN_KEY } from '../../../../configs/client';
 import TextArea from 'antd/lib/input/TextArea';
 import OtpInput from 'react-otp-input';
@@ -47,13 +47,13 @@ class ModalTransfer extends React.Component {
                 from: originWalletNumber,
                 to: destinationWalletNumber,
                 money: amount,
-                isSaving: originWalletNumber/ 1600000> 1?true: false,
+                isSaving: originWalletNumber / 1600000 > 1 ? true : false,
                 description: message,
                 paidBy: payBy == 'sender' ? 1 : 2
             }
             console.log('data:', data);
             this.props.sendTransferInformation(data, accessToken);
-
+            
         }
     }
 
@@ -85,7 +85,8 @@ class ModalTransfer extends React.Component {
                 </Row>
                 <Row>
                     <Col span={12}>Amount Transfer:</Col>
-                    <Col span={12}><Input disabled value={amount}></Input></Col>
+                    <Col span={12}> <InputNumber disabled value={amount} formatter={value => `đ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        parser={value => value.replace(/\đ\s?|(,*)/g, '')} /></Col>
                 </Row>
                 <Row>
                     <Col span={12}>Charge Bear:</Col>

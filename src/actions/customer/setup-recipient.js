@@ -80,7 +80,7 @@ const updateRecipient = (email, walletNumber, remindName, accessToken) => {
 const deleteRecipient = (data, recipients, accessToken) => {
     return (dispatch) => {
         dispatch({ type: DELETE_RECIPIENT });
-
+        console.log('data123465:', data)
         return callApi(`api/recipient/deleteRecipient`, 'DELETE', data, { x_accessToken: accessToken })
             .then(res => {
                 if (!res.data.errors) {

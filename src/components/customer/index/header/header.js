@@ -4,40 +4,54 @@ import './header.css';
 import {
     Layout, Row, Col, Menu, Badge, Dropdown
 } from 'antd';
-import { BellOutlined,BuildOutlined } from '@ant-design/icons';
 
+import { BellOutlined, BuildOutlined } from '@ant-design/icons';
+import { ACCESS_TOKEN_KEY } from '../../../../configs/client';
+import jwt from 'jwt-decode'
 const { Header } = Layout;
-
+const firebase = require("firebase");
 class HeaderPage extends Component {
-
+    pushIsReadNotification(){
+        let decode = jwt(localStorage.getItem(ACCESS_TOKEN_KEY));
+        firebase
+        .firestore()
+        .collection('users')
+        .doc(`${decode.username}@gmail.com`)
+        .update({
+            isRead: true
+        })
+    }
     render() {
-        const menu = (
+        let decode = jwt(localStorage.getItem(ACCESS_TOKEN_KEY));
+        var { notifications,isRead } = this.props;
+        console.log('notifications in props:', notifications)
+        var menuitems = notifications ? notifications.map((notification, index) =>
+            <Menu.Item key={index}>
+                <a>{notification.content}</a>
+            </Menu.Item>
+        ) : <Menu.Item key="0">
+                <a>Nothing</a>
+            </Menu.Item>;
+        var menu = (
             <Menu>
-                <Menu.Item key="0">
-                    <a href="http://www.alipay.com/">1st menu item</a>
-                </Menu.Item>
-                <Menu.Item key="1">
-                    <a href="http://www.taobao.com/">2nd menu item</a>
-                </Menu.Item>
-                <Menu.Divider />
-                <Menu.Item key="3">3rd menu item</Menu.Item>
+                {menuitems}
             </Menu>
         );
         return (
             <Header className="header">
                 <div className="logo" />
                 <Row>
-                    <Col className="nameBank" span={3} offset={1}><h3><BuildOutlined style={{fontSize:'25px',marginRight:'5px',fontWeight:'bold'}}/>Bảo Bình Đạt Bank</h3></Col>
-                    <Col clasName="" span={3} offset={17} style={{ color: 'white' }}>
-                        <Dropdown overlay={menu} trigger={['click']}>
+                    <Col className="nameBank" span={3} offset={1}><h3><BuildOutlined style={{ fontSize: '25px', marginRight: '5px', fontWeight: 'bold' }} />Bảo Bình Đạt Bank</h3></Col>
+                    <Col span={3} offset={13} style={{ color: 'white' }}>
+                        <Dropdown placement="bottomCenter" overlay={menu} trigger={['click']}>
 
-                            <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                                <Badge dot>
+                            <a className="ant-dropdown-link" onClick={this.pushIsReadNotification}>
+                                <Badge dot={!isRead}>
                                     <BellOutlined style={{ fontSize: '20px' }} />
                                 </Badge>
                             </a>
                         </Dropdown>
-                        <span style={{marginLeft:'7px',fontSize:'18px'}}> Hello Bảo</span>
+                        <span style={{ marginLeft: '7px', fontSize: '18px' }}>{decode.name}</span>
                     </Col>
                 </Row>
 

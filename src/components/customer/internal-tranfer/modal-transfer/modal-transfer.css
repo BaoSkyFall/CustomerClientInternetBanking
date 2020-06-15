@@ -4,3 +4,7 @@
 .ant-row .ant-col textarea{
     color:black
 }
+.ant-col .ant-input-number
+{
+    width: 100%;
+} 

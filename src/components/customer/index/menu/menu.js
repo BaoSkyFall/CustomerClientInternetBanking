@@ -71,9 +71,9 @@ class MenuLeft extends React.Component {
                 theme="dark"
                 inlineCollapsed={this.state.collapsed}
             >
-                <Button type="primary" onClick={this.toggleCollapsed} style={{ marginBottom: 16 }}>
+                {/* <Button type="primary" onClick={this.toggleCollapsed} style={{ marginBottom: 16 }}>
                     {React.createElement(this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined)}
-                </Button>
+                </Button> */}
                 <Menu.Item key="1" icon={<WalletOutlined />} >
                     <Link to={MENUITEM.PAYMENT_ACCOUNTS} >
                         <span>Dashboard</span>

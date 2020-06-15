@@ -38,6 +38,14 @@ class DebtReminder extends React.Component {
             className: 'column-money',
             dataIndex: 'money_debt',
             defaultSortOrder: 'descend',
+            render: values => (
+
+                <span className="">
+                    {values.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                    } đ
+                </span>
+
+            ),
             width: '15%',
             sorter: (a, b) => a.money_debt - b.money_debt,
         }, {
@@ -74,6 +82,14 @@ class DebtReminder extends React.Component {
             className: 'column-money',
             dataIndex: 'money_debt',
             defaultSortOrder: 'descend',
+            render: values => (
+
+                <span className="">
+                    {values.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                    } đ
+                </span>
+
+            ),
             width: '15%',
             sorter: (a, b) => a.money_debt - b.money_debt,
         }, {

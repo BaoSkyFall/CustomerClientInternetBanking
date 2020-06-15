@@ -6,47 +6,57 @@ import './style.css';
 import { ACCESS_TOKEN_KEY, EMAIL_KEY } from '../../../configs/client';
 import { formatTransaction } from '../../../ultis/transaction';
 import { URL_SERVER } from '../../../configs/server';
-import {WarningOutlined} from '@ant-design/icons';
-
+import { WarningOutlined } from '@ant-design/icons';
+import jwt from 'jwt-decode'
 class TransactionHistory extends React.Component {
     constructor(props) {
         super(props);
 
         this.columns = [{
-            title: 'Origin Wallet',
-            dataIndex: 'originWalletNumber',
+            title: 'From Origin Wallet',
+            dataIndex: 'user',
             defaultSortOrder: 'descend',
             width: '18%',
-            sorter: (a, b) => a.originWalletNumber.localeCompare(b.originWalletNumber),
+            // sorter: (a, b) => a.user - b.user,
         }, {
-            title: 'Destination Wallet',
-            dataIndex: 'destinationWalletNumber',
+            title: 'To Destination Wallet',
+            dataIndex: 'partner',
             width: '18%',
             defaultSortOrder: 'descend',
-            sorter: (a, b) => a.destinationWalletNumber.localeCompare(b.destinationWalletNumber),
-        }, {
+            // sorter: (a, b) => a.partner - b.partner,
+        },
+            , {
+            title: 'Action',
+            className: 'column-money',
+            dataIndex: 'type',
+            defaultSortOrder: 'descend',
+            width: '13%',
+            sorter: (a, b) => a.type.localeCompare(b.type),
+        },
+        {
             title: 'Date',
-            dataIndex: 'when',
+            dataIndex: 'time',
             defaultSortOrder: 'descend',
             width: '20%',
-            sorter: (a, b) =>  a.when.localeCompare(b.when),
+            sorter: (a, b) => a.time.localeCompare(b.time),
         }, {
             title: 'Amount (VND)',
             className: 'column-money',
-            dataIndex: 'amount',
+            dataIndex: 'money_transfer',
             defaultSortOrder: 'descend',
             width: '15%',
-            sorter: (a, b) =>  a.amount.localeCompare(b.amount),
-        },  {
-            title: 'Charge Fee (VND)',
-            className: 'column-money',
-            dataIndex: 'chargeFee',
-            defaultSortOrder: 'descend', 
-            width: '13%',
-            sorter: (a, b) =>  a.chargeFee.localeCompare(b.chargeFee),
+            render: values => (
+
+                <span className="">
+                    {values.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                    } đ
+                </span>
+
+            ),
+            sorter: (a, b) => a.money_transfer - b.money_transfer,
         }, {
-            title: "Message",
-            dataIndex: 'message',
+            title: "Description",
+            dataIndex: 'description',
             defaultSortOrder: 'descend',
         }];
 
@@ -58,7 +68,8 @@ class TransactionHistory extends React.Component {
 
     componentDidMount() {
         const { accessToken, email } = this.state;
-        this.props.fetchTransactionHistory(email, accessToken);
+        let decode = jwt(accessToken)
+        this.props.fetchTransactionHistoryLocal(decode.userId, accessToken);
 
         // fetch(`${URL_SERVER}/user/me`, {
         //     headers: {
@@ -84,25 +95,25 @@ class TransactionHistory extends React.Component {
 
     render() {
         const { isLoading, transactionHistory, messageError } = this.props;
-
+        console.log('transactionHistory:', transactionHistory)
         if (messageError === 'AccessToken is not valid') {
             this.props.resetStore();
             return (<Redirect to={{
                 pathname: '/signin',
-            }}/>);
+            }} />);
         }
 
         const contentLayout = (
             <React.Fragment>
-                 {messageError ?
+                {messageError ?
                     notification.open({
                         message: messageError,
-                        icon: <WarningOutlined style={{color:'red'}}/>,
+                        icon: <WarningOutlined style={{ color: 'red' }} />,
                     }) : null}
-                
+
                 <Table
                     columns={this.columns}
-                    dataSource={formatTransaction(transactionHistory)}
+                    dataSource={transactionHistory}
                     onChange={this.handleChange}
                     pagination={{ pageSize: 10 }}
                     scroll={{ y: '60vh' }}
