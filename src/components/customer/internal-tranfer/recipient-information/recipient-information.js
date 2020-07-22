@@ -80,7 +80,6 @@ class Recipient extends Component {
     render() {
 
         const { emailRecipient, bankRecipient, fullNameRecipient } = this.props;
-
         return (
             <Card
                 title="Information Of Recipient"

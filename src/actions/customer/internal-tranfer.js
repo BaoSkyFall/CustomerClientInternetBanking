@@ -165,7 +165,7 @@ const trackRecipientForeign = (walletNumber, accessToken) => {
                     dispatch({
                         type: TRACK_RECIPIENT_FOREIGN_SUCCESS,
                         fullNameRecipient: res.data.data[0].fullname,
-                        bankRecipient: res.data.data[0].name,
+                        bankRecipient: res.data.data[0].Name,
                     })
                 }
                 else {

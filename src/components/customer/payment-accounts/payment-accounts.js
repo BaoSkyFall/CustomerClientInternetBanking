@@ -21,7 +21,7 @@ class PaymentAccounts extends Component {
         const { accessToken, email } = this.state;
         let decode = jwt(accessToken);
         const { fetchPaymentAccounts } = this.props;
-        fetchPaymentAccounts(decode.userId)
+        fetchPaymentAccounts(decode.userId,accessToken)
     }
     render() {
         const { messageError, isLoading, paymentAccounts } = this.props;

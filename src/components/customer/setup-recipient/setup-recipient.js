@@ -163,7 +163,7 @@ class SetupRecipient extends React.Component {
         const { accessToken, email } = this.state;
         let decode = jwt(accessToken);
         console.log('decode:', decode)
-        this.props.fetchRecipients(decode.userId, accessToken);
+        this.props.fetchRecipients(decode.username, accessToken);
 
         // fetch(`${URL_SERVER}/user/me`, {
         //     headers: {
