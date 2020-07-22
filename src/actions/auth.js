@@ -15,6 +15,7 @@ import {
     REFRESH_TOKEN_KEY,
     EMAIL_KEY,
 } from '../configs/client';
+import jwt from 'jwt-decode';
 const firebase = require("firebase");
 
 const doSignUp = (infoUser) => {
@@ -69,21 +70,13 @@ const doSignIn = (infoUser) => {
             .then(res => res.json())
             .then(res => {
                 if (res.returnCode === 1) {
-                    firebase
-                        .auth()
-                        .signInWithEmailAndPassword(infoUser.username + "@gmail.com", infoUser.password).then((rs) => {
-                            console.log('rs:', rs);
-                            localStorage.setItem(ACCESS_TOKEN_KEY, res.data.accessToken);
-                            localStorage.setItem(REFRESH_TOKEN_KEY, res.data.refreshToken);
-
-                            dispatch({
-                                type: DO_SIGNIN_SUCCESS,
-                                signinSuccess: true
-                            });
-                        }, err => {
-
-                            console.log('Error logging in: ', err);
-                        });
+                    localStorage.setItem(ACCESS_TOKEN_KEY, res.data.accessToken);
+                    localStorage.setItem(REFRESH_TOKEN_KEY, res.data.refreshToken);
+                 
+                    dispatch({
+                        type: DO_SIGNIN_SUCCESS,
+                        signinSuccess: true
+                    });
 
                 }
                 else {

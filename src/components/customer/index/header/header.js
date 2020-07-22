@@ -11,19 +11,19 @@ import jwt from 'jwt-decode'
 const { Header } = Layout;
 const firebase = require("firebase");
 class HeaderPage extends Component {
-    pushIsReadNotification(){
+    pushIsReadNotification() {
         let decode = jwt(localStorage.getItem(ACCESS_TOKEN_KEY));
         firebase
-        .firestore()
-        .collection('users')
-        .doc(`${decode.username}@gmail.com`)
-        .update({
-            isRead: true
-        })
+            .firestore()
+            .collection('notifications')
+            .doc(decode.walletId.toString())
+            .update({
+                isRead: true
+            })
     }
     render() {
         let decode = jwt(localStorage.getItem(ACCESS_TOKEN_KEY));
-        var { notifications,isRead } = this.props;
+        var { notifications, isRead } = this.props;
         console.log('notifications in props:', notifications)
         var menuitems = notifications ? notifications.map((notification, index) =>
             <Menu.Item key={index}>

@@ -31,6 +31,7 @@ import { ACCESS_TOKEN_KEY } from '../../configs/client';
 import { URL_SERVER, URL_SERVER_DEPLOY } from '../../configs/server';
 import jwt from 'jwt-decode';
 import callApi from '../../ultis/callApi';
+import moment from 'moment'
 const firebase = require("firebase");
 
 const fetchUserWallets = (id, accessToken) => {
@@ -183,12 +184,13 @@ const trackRecipientForeign = (walletNumber, accessToken) => {
     }
 }
 function pushNotificationFireBase(string, doc) {
+    console.log('doc:', doc)
     firebase
         .firestore()
-        .collection('users')
-        .doc(doc)
+        .collection('notifications')
+        .doc(doc.toString())
         .update({
-            notifications: firebase.firestore.FieldValue.arrayUnion({
+            listNotify: firebase.firestore.FieldValue.arrayUnion({
                 content: string,
 
             }),
@@ -205,8 +207,13 @@ const sendTransferInformation = (data, accessToken) => {
                 console.log('res Tranfer Money:', res.data.message)
                 if (!res.data.errors) {
                     let decoded = jwt(accessToken);
-                    console.log('data:', data);
-                    pushNotificationFireBase(`Tranfer money success to `, `${decoded.username}@gmail.com`);
+                    console.log('data Transfer:', data);
+                    let date = moment(Date.now()).format("DD/MM/YYYY hh:mm a")
+                    pushNotificationFireBase(`You has been debited ${data.money} VNĐ success on ${date} to ${data.to} with desciption ${data.description}`, decoded.walletId);
+                    pushNotificationFireBase(`You has been credited ${data.money} VNĐ success on ${date} from ${data.from}  with desciption ${data.description}`, data.to);
+                    dispatch({
+                        type: TOGGLE_MODAL_TRANSFER,
+                    });
                     dispatch({
                         type: SEND_TRANSFER_INFORMATION_SUCCESS,
                         // idTransaction: res.data.data.created_verification._id,

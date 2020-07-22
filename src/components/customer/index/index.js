@@ -4,6 +4,7 @@ import MenuLeft from './menu/menu';
 import Content from './content/content';
 import './index.css'
 import { Row, Col, notification } from 'antd';
+import jwt from 'jwt-decode';
 
 import { ACCESS_TOKEN_KEY } from '../../../configs/client';
 const firebase = require("firebase");
@@ -14,39 +15,64 @@ class Dashboard extends React.Component {
         this.state = {
             collapse: false,
             notifications: null,
-            isRead:true
+            isRead: true,
         }
     }
 
     updateCollapse = (collapse) => {
         this.setState({ collapse });
     }
+    checkExistNotificationsFirebase = async (walletId) => {
 
+        console.log('checkExistNotificationsFirebase Work!: ', walletId)
+        const notification = await
+            firebase
+                .firestore()
+                .collection('notifications')
+                .doc(walletId)
+                .get();
+        console.log('notification exists:', notification.exists)
+        console.log();
+        if (!notification.exists) {
+            firebase
+                .firestore()
+                .collection('notifications')
+                .doc(walletId)
+                .set({
+                    walletId: walletId,
+                    listNotify: [],
+                    isRead: true
+                })
+        }
+        else {
+            firebase
+                .firestore()
+                .collection('notifications')
+                .where('walletId', '==', walletId)
+                .onSnapshot(async res => {
+                    const data = res.docs.map(_doc => _doc.data());
+                    console.log('data notifications:', data)
+                    await this.setState({
+                        notifications: data[0].listNotify,
+                        isRead: data[0].isRead
+                    });
+                })
+        }
+    }
     componentDidMount = () => {
         console.log("componentDidMount work!")
-        firebase.auth().onAuthStateChanged(async _usr => {
-            if (!_usr)
-                this.props.history.push('/login');
-            else {
-                await firebase
-                    .firestore()
-                    .collection('users')
-                    .where('email', '==', _usr.email)
-                    .onSnapshot(async res => {
-                        const data = res.docs.map(_doc => _doc.data());
-                        console.log('data:', data)
-                        await this.setState({
-                            notifications: data[0].notifications,
-                            isRead: data[0].isRead
-                        });
-                    })
-            }
-        });
+        let accessToken = localStorage.getItem(ACCESS_TOKEN_KEY)
+        let decoded = jwt(accessToken);
+        this.checkExistNotificationsFirebase(decoded.walletId.toString());
+        
+
+
     }
+
     render() {
         let GirdLayout;
-        const {notifications,isRead}= this.state;
- 
+        const { notifications, isRead } = this.state;
+
         if (this.state.collapse) {
             GirdLayout = (<Row>
                 <Col span={2}>
@@ -70,7 +96,7 @@ class Dashboard extends React.Component {
 
         return (
             <React.Fragment>
-                <HeaderPage isRead={isRead}notifications={notifications} />
+                <HeaderPage isRead={isRead} notifications={notifications} />
                 {GirdLayout}
             </React.Fragment>
         )

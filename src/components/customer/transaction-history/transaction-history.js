@@ -29,7 +29,6 @@ class TransactionHistory extends React.Component {
             title: 'Action',
             className: 'column-money',
             dataIndex: 'type',
-            defaultSortOrder: 'descend',
             width: '13%',
             sorter: (a, b) => a.type.localeCompare(b.type),
         },
