@@ -30,7 +30,7 @@ class Recipient extends Component {
     handleAdd = () => {
         const { value } = this.state;
         const { accessToken, email } = this.props;
-        this.props.addRecipient(email, value, '', accessToken);
+        this.props.addRecipientLocal(email, value, '', accessToken);
     }
 
     recipientLocalWalletsLayout = () => {
@@ -115,7 +115,7 @@ class Recipient extends Component {
 
                             </Form.Item>
 
-                            <Form.Item {...this.props.formItemLayout} label='Add contact'>
+                            <Form.Item {...this.props.formItemLayout} label='Add New Recipient'>
                                 <Button
                                     type="info"
                                     icon={<UsergroupAddOutlined />}

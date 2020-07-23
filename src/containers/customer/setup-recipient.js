@@ -6,7 +6,7 @@ import {
   updateRecipient,
   deleteRecipient,
   resetStore,
-  addRecipient,
+  addRecipientLocal,
   toggleModalAddRecipient,
   changeTabPanel
 } from '../../actions/customer/setup-recipient';
@@ -24,14 +24,17 @@ const mapStateToProps = (state) => {
     isLocalAdd: state.setupRecipientReducer.isLocalAdd,
     bankRecipient: state.internalTransferReducer.bankRecipient,
     fullNameRecipient: state.internalTransferReducer.fullNameRecipient,
+    usernameRecipient: state.internalTransferReducer.usernameRecipient,
+    isLocalRecipient: state.internalTransferReducer.isLocalRecipient,
+
   }
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     fetchRecipients: (id, accessToken) => dispatch(fetchRecipients(id, accessToken)),
-    addRecipient: (email, receiverWalletNumber, remindName, accessToken) => dispatch(addRecipient(email, receiverWalletNumber, remindName, accessToken)),
-    updateRecipient: (email, walletNumber, remindName, accessToken) => dispatch(updateRecipient(email, walletNumber, remindName, accessToken)),
+    addRecipientLocal: (username, receiverWalletNumber, remindName,usernameRecipient,isLocalAdd, accessToken) => dispatch(addRecipientLocal(username, receiverWalletNumber, remindName,usernameRecipient,isLocalAdd, accessToken)),
+    updateRecipient: (email, walletNumber, remindName,recipients, accessToken) => dispatch(updateRecipient(email, walletNumber, remindName, recipients,accessToken)),
     deleteRecipient: (data, recipients, accessToken) => dispatch(deleteRecipient(data, recipients, accessToken)),
     resetStore: () => dispatch(resetStore()),
     toggleModalAddRecipient: (isShowModalAddRecipient) => dispatch(toggleModalAddRecipient(isShowModalAddRecipient)),

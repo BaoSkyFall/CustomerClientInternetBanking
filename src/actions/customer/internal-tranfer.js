@@ -106,6 +106,9 @@ const trackRecipientLocal = (walletNumber, accessToken) => {
                         type: TRACK_RECIPIENT_LOCAL_SUCCESS,
                         emailRecipient: res.data.data[0].email,
                         fullNameRecipient: res.data.data[0].fullname,
+                        usernameRecipient : res.data.data[0].username,
+                        isLocalRecipient : res.data.data[0].isLocal,
+                    
                         bankRecipient: res.data.data[0].name,
                     })
                 }
@@ -276,6 +279,7 @@ const toggleModalAddRecipient = () => {
     return (dispatch) => {
         dispatch({
             type: TOGGLE_MODAL_ADD_RECIPIENT,
+            
         });
     }
 }

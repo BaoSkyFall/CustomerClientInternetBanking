@@ -57,7 +57,21 @@ export default function setupRecipientReducer(state = initialState, action) {
             }
         }
         case ADD_RECIPIENT_SUCCESS:
+            {
+                return {
+                    ...state,
+                    messageSuccess: action.messageSuccess,
+                    isLoading: false
+                }
+            }
         case UPDATE_RECIPIENT_SUCCESS:
+            {
+                return {
+                    ...state,
+                    messageSuccess: action.messageSuccess,
+                    isLoading: false
+                }
+            }
         case DELETE_RECIPIENT_SUCCESS: {
             return {
                 ...state,

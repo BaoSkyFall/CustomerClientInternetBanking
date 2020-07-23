@@ -40,7 +40,9 @@ const initialState = {
     isLoading: false,
     bankRecipient: '',
     emailRecipient: '',
-    fullNameRecipient: ''
+    fullNameRecipient: '',
+    usernameRecipient: '',
+    isLocalRecipient: false,
 };
 
 export default function internalTransferReducer(state = initialState, action) {
@@ -113,6 +115,8 @@ export default function internalTransferReducer(state = initialState, action) {
                 ...state,
                 emailRecipient: action.emailRecipient,
                 fullNameRecipient: action.fullNameRecipient,
+                usernameRecipient: action.usernameRecipient,
+                isLocalRecipient: action.isLocalRecipient,
                 bankRecipient: action.bankRecipient ? action.bankRecipient : 'BBD Bank',
                 isLoading: false
             }

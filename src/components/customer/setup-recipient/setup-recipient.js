@@ -107,6 +107,7 @@ class SetupRecipient extends React.Component {
             dataIndex: 'name_recipient',
             width: '30%',
             editable: true,
+         
         }, {
             title: "Bank's Name",
             dataIndex: 'Name',
@@ -130,9 +131,10 @@ class SetupRecipient extends React.Component {
         const { accessToken } = this.state;
         const { fetchRecipients } = this.props
 
-        let decode = jwt(accessToken);
-        console.log('decode:', decode)
+        let decoded = jwt(accessToken);
+        console.log('decode:', decoded)
         // fetchRecipients(decode.username, accessToken);
+        // this.props.fetchRecipients(decoded.username,accessToken);
 
 
 
@@ -147,12 +149,15 @@ class SetupRecipient extends React.Component {
 
     handleSave = (row) => {
         const { accessToken, email } = this.state;
+        let decoded = jwt(accessToken);
         const newData = this.props.recipients;
         const index = newData.findIndex(item => row.walletId === item.walletId);
+        const { updateRecipient, recipients } = this.props
+
         const item = newData[index];
         console.log('item:', item)
         console.log('row:', row);
-        // this.props.updateRecipient(email, item.walletId, row.remindName, accessToken);
+        updateRecipient(row.id, row.id_recipient, row.name_recipient,recipients, accessToken);
     }
 
     handleAdd = () => {

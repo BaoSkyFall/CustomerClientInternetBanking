@@ -2,6 +2,7 @@ import React from 'react';
 import { Modal, Spin, Form, Input, Tabs } from 'antd';
 import { RetweetOutlined, BankOutlined } from '@ant-design/icons'
 import './style.css';
+import jwt from 'jwt-decode';
 const { TabPane } = Tabs;
 
 class ModalAddRecipient extends React.Component {
@@ -9,19 +10,20 @@ class ModalAddRecipient extends React.Component {
     formRef2 = React.createRef();
 
     handleOk = (e) => {
-        const { email, accessToken } = this.props;
-        this.props.form.validateFieldsAndScroll((err, values) => {
+        const { email, accessToken, isLocalRecipient, usernameRecipient, isLocalAdd, form } = this.props;
+        this.formRef1.current.validateFields().then(values => {
             let { walletNumber, remindName } = values;
             remindName = remindName ? remindName : '';
-            if (!err) {
-                this.props.addRecipient(email, walletNumber, remindName, accessToken);
-            }
+            let decoded = jwt(accessToken);
+            console.log('decoded:', decoded)
+            console.log('remindName:', remindName)
+            this.props.addRecipientLocal(decoded.username, walletNumber, remindName, usernameRecipient, isLocalRecipient, accessToken);
+
         });
     }
     componentDidUpdate = () => {
-        const { bankRecipient, fullNameRecipient, isLocalAdd } = this.props
-        console.log('bankRecipient:', bankRecipient)
-        console.log('fullNameRecipient:', fullNameRecipient);
+        const { bankRecipient, fullNameRecipient, usernameRecipient, isLocalAdd } = this.props
+
         if (fullNameRecipient) {
             if (isLocalAdd) {
                 this.formRef1.current.setFieldsValue({
@@ -31,7 +33,7 @@ class ModalAddRecipient extends React.Component {
             else {
                 this.formRef2.current.setFieldsValue({
                     remindName: fullNameRecipient,
-                    bankRecipient:bankRecipient
+                    bankRecipient: bankRecipient
                 })
             }
         }
@@ -41,13 +43,13 @@ class ModalAddRecipient extends React.Component {
         this.props.toggleModalAddRecipient(false);
     }
     handleOnPressEnter = (e) => {
-        const { isLocalAdd, trackRecipientLocal, trackRecipientForeign } = this.props
+        const { isLocalAdd, trackRecipientLocal, trackRecipientForeign, accessToken } = this.props
         let value = e.target.value;
         if (isLocalAdd) {
-            trackRecipientLocal(value)
+            trackRecipientLocal(value, accessToken)
         }
         else {
-            trackRecipientForeign(value)
+            trackRecipientForeign(value, accessToken)
 
         }
     }

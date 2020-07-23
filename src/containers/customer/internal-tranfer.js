@@ -15,7 +15,7 @@ import {
   trackRecipientForeign,
   resetStore
 } from '../../actions/customer/internal-tranfer';
-import { toggleModalAddRecipient, addRecipient } from '../../actions/customer/setup-recipient';
+import { toggleModalAddRecipient, addRecipientLocal } from '../../actions/customer/setup-recipient';
 
 class InternalTransfer extends Component {
   constructor(props) {
@@ -61,8 +61,8 @@ const mapDispatchToProps = (dispatch) => {
       return dispatch(sendTransferInformation(email, originWalletNumber, destinationWalletNumber, payBy, amount, message, accessToken));
     },
     toggleModalTransfer: () => dispatch(toggleModalTransfer()),
-    toggleModalAddRecipient: () => dispatch(toggleModalAddRecipient()),
-    addRecipient: (email, receiverWalletNumber, remindName, accessToken) => dispatch(addRecipient(email, receiverWalletNumber, remindName, accessToken)),
+    toggleModalAddRecipient: (isShowModalAddRecipient) => dispatch(toggleModalAddRecipient(isShowModalAddRecipient)),
+    addRecipientLocal: (username, receiverWalletNumber, remindName,usernameRecipient,isLocalAdd, accessToken) => dispatch(addRecipientLocal(username, receiverWalletNumber, remindName,usernameRecipient,isLocalAdd, accessToken)),
     trackRecipientLocal: (walletNumber, accessToken) => dispatch(trackRecipientLocal(walletNumber, accessToken)),
     trackRecipientForeign: (walletNumber, accessToken) => dispatch(trackRecipientForeign(walletNumber, accessToken)),
     setBalance: (balance) => dispatch(setBalance(balance)),

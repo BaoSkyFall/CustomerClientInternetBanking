@@ -19,15 +19,16 @@ import {
 import { URL_SERVER_DEPLOY } from '../../configs/server';
 import callApi from '../../ultis/callApi';
 import * as _ from 'lodash'
-const fetchRecipients = (id, accessToken) => {
+const fetchRecipients = (username, accessToken) => {
     return (dispatch) => {
         dispatch({ type: FETCH_RECIPIENTS });
 
-        return callApi(`api/recipient/getAllRecipient/${id}`, 'GET', {}, { x_accessToken: accessToken })
+        return callApi(`api/recipient/getAllRecipient/${username}`, 'GET', {}, { x_accesstoken: accessToken })
             .then(res => {
                 console.log('res All recipient:', res)
 
-                if (!res.data.errors) {
+                if (res.data.returnCode == 1) {
+                    console.log('returnCode:', res.data.returnCode)
                     dispatch({
                         type: FETCH_RECIPIENTS_SUCCESS,
                         recipients: res.data.data
@@ -44,34 +45,40 @@ const fetchRecipients = (id, accessToken) => {
                 console.log('error:', error)
                 dispatch({
                     type: FETCH_RECIPIENTS_FAIL,
-                    messageError: "Can't connect to server"
+                    messageError: error.data.message
                 });
             })
     }
 }
 
-const updateRecipient = (email, walletNumber, remindName, accessToken) => {
+const updateRecipient = (id, id_recipient, name_recipient, recipients,accessToken) => {
     return (dispatch) => {
         dispatch({ type: UPDATE_RECIPIENT });
-
-        axios.post(URL_SERVER_DEPLOY, {})
+        return callApi(`api/recipient/editRecipient`, 'PUT', {id,id_recipient,name_recipient}, { x_accesstoken: accessToken })
             .then(res => {
-                if (!res.data.errors) {
+                if (res.data.returnCode == 1) {
+                    let index = _.findIndex(recipients, function(o) { return o.id == id && o.id_recipient == id_recipient })
+                    recipients[index].name_recipient = name_recipient;
                     dispatch({
                         type: UPDATE_RECIPIENT_SUCCESS,
-                        recipients: res.data.data.updated_receivers,
-                        messageSuccess: `Update remind name successfully!`
+                         recipients: recipients,
+                        messageSuccess: `Update remind name to ${name_recipient} successfully!`
                     });
                 }
                 else {
                     dispatch({
                         type: UPDATE_RECIPIENT_FAIL,
-                        messageError: res.data.errors[0].message
+                        messageError: res.message
                     });
                 }
             })
             .catch(error => {
                 console.log(error);
+                console.log('error:', error)
+                dispatch({
+                    type: UPDATE_RECIPIENT_FAIL,
+                    messageError: error.message
+                });
             })
     }
 }
@@ -81,12 +88,12 @@ const deleteRecipient = (data, recipients, accessToken) => {
     return (dispatch) => {
         dispatch({ type: DELETE_RECIPIENT });
         console.log('data123465:', data)
-        return callApi(`api/recipient/deleteRecipient`, 'DELETE', data, { x_accessToken: accessToken })
+        return callApi(`api/recipient/deleteRecipient`, 'DELETE', data, { x_accesstoken: accessToken })
             .then(res => {
                 if (!res.data.errors) {
-            
+
                     let result = _.remove(recipients, function (n) {
-                        return n.walletId == data.walletId && n.username_recipient==data.username_recipient && n.isLocal == data.isLocal && n.username == data.username
+                        return n.walletId == data.walletId && n.username_recipient == data.username_recipient && n.isLocal == data.isLocal && n.username == data.username
                     });
                     console.log('result:', result)
                     dispatch({
@@ -112,36 +119,75 @@ const deleteRecipient = (data, recipients, accessToken) => {
     }
 }
 
-const addRecipient = (email, receiverWalletNumber, remindName, accessToken) => {
+const addRecipientLocal = (username, receiverWalletNumber, remindName, usernameRecipient, isLocalAdd, accessToken) => {
     return (dispatch) => {
         dispatch({
             type: ADD_RECIPIENT
         });
-
-        axios.post(URL_SERVER_DEPLOY, {})
+        console.log('accessToken:', accessToken)
+        return callApi(`api/recipient/addRecipientLocal`, 'POST', { id_recipient: usernameRecipient, id: username, bank_LinkId: 'bankdbb', name_recipient: remindName, isLocal: isLocalAdd, walletId: receiverWalletNumber }, { x_accesstoken: accessToken })
             .then(res => {
-                if (!res.data.errors) {
+                if (res.data.returnCode ==1) {
                     dispatch({
                         type: ADD_RECIPIENT_SUCCESS,
-                        recipients: res.data.data.created_receivers,
                         messageSuccess: `Create receiver record successfully!`
                     });
+                    callApi(`api/recipient/getAllRecipient/${username}`, 'GET', {}, { x_accesstoken: accessToken })
+                        .then(res => {
+                            console.log('res All recipient:', res)
+
+                            if (!res.data.errors) {
+                                dispatch({
+                                    type: FETCH_RECIPIENTS_SUCCESS,
+                                    recipients: res.data.data
+                                });
+                            }
+                            else {
+                                dispatch({
+                                    type: FETCH_RECIPIENTS_FAIL,
+                                    messageError: res.data.message
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.log('error:', error)
+                            dispatch({
+                                type: FETCH_RECIPIENTS_FAIL,
+                                messageError: "Can't connect to server"
+                            });
+                        })
+
                 }
-                else {
+                else if (res.data.returnCode == -1) {
                     dispatch({
                         type: ADD_RECIPIENT_FAIL,
-                        messageError: res.data.errors[0].message
+                        messageError: res.data.message
                     });
                 }
+                else
+                {
+                    dispatch({
+                        type: ADD_RECIPIENT_FAIL,
+                        messageError: res.data.message
+                    });
+                }
+            }).catch(error => {
+                console.log('error:', error)
+                dispatch({
+                    type: ADD_RECIPIENT_FAIL,
+                    messageError: 'Error might Cause from Server'
+                });
             })
     }
 }
 
 const toggleModalAddRecipient = (isShowModalAddRecipient) => {
+    console.log('isShowModalAddRecipientLocal:', isShowModalAddRecipient)
     return (dispatch) => {
         dispatch({
             type: TOGGLE_MODAL_ADD_RECIPIENT,
             isShowModalAddRecipient
+
         });
     }
 }
@@ -165,7 +211,7 @@ export {
     fetchRecipients,
     updateRecipient,
     deleteRecipient,
-    addRecipient,
+    addRecipientLocal,
     changeTabPanel,
     toggleModalAddRecipient,
     resetStore
