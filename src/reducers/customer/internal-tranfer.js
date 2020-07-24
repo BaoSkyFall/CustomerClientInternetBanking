@@ -143,6 +143,7 @@ export default function internalTransferReducer(state = initialState, action) {
             }
         }
         case GET_OTP_SUCCESS: {
+            console.log('action GET OTP SUCCESS:', action)
             return {
                 ...state,
                 messageSuccess: action.messageSuccess,

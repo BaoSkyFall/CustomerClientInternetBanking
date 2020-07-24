@@ -169,7 +169,7 @@ class SetupRecipient extends React.Component {
         let decode = jwt(accessToken);
         console.log('decode:', decode)
         this.props.fetchRecipients(decode.username, accessToken);
-
+        
         // fetch(`${URL_SERVER}/user/me`, {
         //     headers: {
         //         x_accesstoken: accessToken
@@ -194,7 +194,7 @@ class SetupRecipient extends React.Component {
 
     render() {
         const { recipients, messageSuccess, messageError, isLoading } = this.props;
-
+        
         if (messageError === 'AccessToken is not valid') {
             return (<Redirect to={{
                 pathname: '/signin',

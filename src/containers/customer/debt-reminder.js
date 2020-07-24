@@ -9,10 +9,15 @@ import {
     showAddModal,
     handleCancelModal,
     fetchGetNameByWalletId,
+    showPayDebtModal,
+    handleCancelPayDebtModal,
     deleteDebtOwner
 } from '../../actions/customer/debt-reminder';
 
+import { 
+    getOTP,
 
+  } from '../../actions/customer/internal-tranfer';
 
 
 const mapStateToProps = (state) => {
@@ -29,21 +34,27 @@ const mapStateToProps = (state) => {
         name:state.debtReminderReducer.name,
         idDebtor:state.debtReminderReducer.idDebtor,
         walletId:state.debtReminderReducer.walletId,
-        isAction: state.debtReminderReducer.isAction
-        
+        isAction: state.debtReminderReducer.isAction,
+        data: state.debtReminderReducer.data,
+        visiblePayDebt: state.debtReminderReducer.visiblePayDebt,
+        messageSuccessOTP: state.internalTransferReducer.messageSuccess
     }
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
         fetchGetDebtReminder: (email, accessToken) => dispatch(fetchGetDebtReminder(email, accessToken)),
-        fetchTranferMoneyDebt: (email, accessToken, id_owner, money) => dispatch(fetchTranferMoneyDebt(email, accessToken, id_owner, money)),
+        fetchTranferMoneyDebt: (data,accessToken) => dispatch(fetchTranferMoneyDebt(data,accessToken)),
         fetchGetDebtOwner: (email, accessToken) => dispatch(fetchGetDebtOwner(email, accessToken)),
         fetchGetNameByWalletId: (wallet_id,accessToken)=>dispatch(fetchGetNameByWalletId(wallet_id,accessToken)),
         addDebtReminder: (data, accessToken) => dispatch(addDebtReminder(data, accessToken)),
         showAddModal: () => dispatch(showAddModal()),
         handleCancelModal:()=> dispatch(handleCancelModal()),
-        deleteDebtOwner:(id_debt,accessToken)=> dispatch(deleteDebtOwner(id_debt,accessToken))
+        showPayDebtModal: (data) => dispatch(showPayDebtModal(data)),
+        handleCancelPayDebtModal: ()=> dispatch(handleCancelPayDebtModal()),
+        deleteDebtOwner:(id_debt,accessToken)=> dispatch(deleteDebtOwner(id_debt,accessToken)),
+        getOTP:(email,accessToken) =>dispatch(getOTP(email,accessToken)),
+
     }
 }
 

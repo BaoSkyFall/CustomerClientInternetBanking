@@ -19,7 +19,9 @@ import {
     DELETE_DEBT_OWNER_SUCCESS,
     DELETE_DEBT_OWNER_FAIL,
     SHOW_ADD_MODAL,
-    HANDLE_CANCEL_MODAL
+    HANDLE_CANCEL_MODAL,
+    SHOW_PAY_DEBT_MODAL,
+    HANDLE_CANCEL_PAY_DEBT_MODAL
 
 } from '../../constants/customer/debt-reminder.js';
 import { URL_SERVER, URL_SERVER_DEPLOY } from '../../configs/server';
@@ -54,23 +56,65 @@ const fetchGetDebtReminder = (id_debtor, accessToken) => {
 
     }
 }
-const fetchTranferMoneyDebt = (email, accessToken, id_owner, money) => {
+const fetchTranferMoneyDebt = (data, accessToken) => {
     return (dispatch) => {
         dispatch({ type: FETCH_TRANFER_MONEY_DEBT });
 
-        return axios.post(URL_SERVER_DEPLOY, {})
+        return callApi(`api/debt-reminder/payDebt`, 'POST', data, { x_accessToken: accessToken })
             .then(res => {
-                if (res.status === 201) {
+                console.log('res:', res)
+                if (res.data.returnCode === 1) {
                     dispatch({
                         type: FETCH_TRANFER_MONEY_DEBT_SUCCESS,
-                        messageSuccess: res.data.data
+                        messageSuccess: res.data.message
                     });
+                    callApi(`api/debt-reminder/getDebtReminder/${data.id_debtor}`, 'GET', {}, { x_accessToken: accessToken })
+                    .then(res => {
+                        console.log('res:', res);
+                        if (res.status === 200) {
+                            dispatch({
+                                type: FETCH_GET_DEBT_REMINDER_SUCCESS,
+                                debtReminders: res.data.data
+                            });
+                        }
+                        else {
+                            dispatch({
+                                type: FETCH_GET_DEBT_REMINDER_FAIL,
+                                messageError: res.data.message
+                            });
+                        }
+                    })
+                    .catch((err) => {
+                        dispatch({
+                            type: FETCH_GET_DEBT_REMINDER_FAIL,
+                            messageError: "Error Server"
+                        });
+                    })
+        
+                    dispatch({
+                        type: HANDLE_CANCEL_PAY_DEBT_MODAL
+                    })
                 }
 
-                else {
+                else if (res.data.returnCode == -1) {
                     dispatch({
                         type: FETCH_TRANFER_MONEY_DEBT_FAIL,
-                        messageError: res.data.errors[0].message
+                        messageError: res.data.message
+                    });
+                        dispatch({
+                            type: FETCH_TRANFER_MONEY_DEBT_FAIL,
+                            messageError: ''
+                        });
+               
+                }
+                else if (res.data.returnCode == 0) {
+                    dispatch({
+                        type: FETCH_TRANFER_MONEY_DEBT_FAIL,
+                        messageError: res.data.message
+                    });
+                    dispatch({
+                        type: FETCH_TRANFER_MONEY_DEBT_FAIL,
+                        messageError: ''
                     });
                 }
             })
@@ -135,7 +179,7 @@ const fetchGetNameByWalletId = (wallet_id, accessToken) => {
         return callApi(`api/debt-reminder/getNameByWalletId/${wallet_id}`, 'GET', {}, { x_accessToken: accessToken })
             .then(res => {
                 if (!res.data.errors && res.data.data.length > 0) {
-                    console.log("res.data: ", res.data.data[0])
+                    console.log("res.data12345: ", res.data.data[0])
                     dispatch({
                         type: GET_NAME_BY_WALLET_ID_SUCCESS,
                         name: res.data.data[0].name,
@@ -194,9 +238,11 @@ const showAddModal = () => {
     return dispatch => {
         dispatch({
             type: SHOW_ADD_MODAL
+
         })
     }
 }
+
 const handleCancelModal = () => {
     return dispatch => {
         dispatch({
@@ -204,7 +250,23 @@ const handleCancelModal = () => {
         })
     }
 }
+const showPayDebtModal = (data) => {
+    console.log('data:', data)
+    return dispatch => {
+        dispatch({
+            type: SHOW_PAY_DEBT_MODAL,
+            data
+        })
+    }
+}
 
+const handleCancelPayDebtModal = () => {
+    return dispatch => {
+        dispatch({
+            type: HANDLE_CANCEL_PAY_DEBT_MODAL
+        })
+    }
+}
 export {
     fetchGetDebtReminder,
     fetchTranferMoneyDebt,
@@ -213,5 +275,7 @@ export {
     fetchGetDebtOwner,
     addDebtReminder,
     handleCancelModal,
-    showAddModal
+    showAddModal,
+    showPayDebtModal,
+    handleCancelPayDebtModal
 }

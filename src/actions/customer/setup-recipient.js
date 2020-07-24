@@ -16,7 +16,6 @@ import {
     ADD_RECIPIENT_FAIL,
     TOGGLE_MODAL_ADD_RECIPIENT
 } from '../../constants/customer/setup-recipient';
-import { URL_SERVER_DEPLOY } from '../../configs/server';
 import callApi from '../../ultis/callApi';
 import * as _ from 'lodash'
 const fetchRecipients = (username, accessToken) => {
@@ -45,7 +44,7 @@ const fetchRecipients = (username, accessToken) => {
                 console.log('error:', error)
                 dispatch({
                     type: FETCH_RECIPIENTS_FAIL,
-                    messageError: error.data.message
+                    messageError:"Error"
                 });
             })
     }

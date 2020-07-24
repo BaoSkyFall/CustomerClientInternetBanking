@@ -1,31 +1,34 @@
 import React from 'react';
 import { Table, notification, Spin, Card, Row, InputNumber, Col, Popconfirm, Button, Modal, Form, Input } from 'antd';
-import { PlusSquareOutlined, RetweetOutlined, DeleteFilled, TransactionOutlined } from '@ant-design/icons';
+import { PlusSquareOutlined, RetweetOutlined, DeleteFilled, TransactionOutlined, CheckCircleFilled } from '@ant-design/icons';
 import { Redirect } from 'react-router-dom';
 
 import './debt-reminder.css';
 import { ACCESS_TOKEN_KEY, EMAIL_KEY } from '../../../configs/client';
 import { formatTransaction } from '../../../ultis/transaction';
 import { URL_SERVER } from '../../../configs/server';
-import { WarningOutlined } from '@ant-design/icons';
+import { WarningOutlined, InfoCircleOutlined, MailFilled } from '@ant-design/icons';
 import jwt from 'jwt-decode';
 
 class DebtReminder extends React.Component {
     formRef = React.createRef();
+    formRef2 = React.createRef();
+    inputRef = React.createRef();
+
     constructor(props) {
         super(props);
 
         this.columnsDebtReminders = [{
             title: 'Creditor',
             dataIndex: 'creditor',
-            defaultSortOrder: 'descend',
+            // defaultSortOrder: 'descend',
             width: '18%',
             sorter: (a, b) => a.creditor.localeCompare(b.creditor),
         }, {
             title: 'Wallet ID',
             dataIndex: 'walletID',
             width: '18%',
-            defaultSortOrder: 'descend',
+            // defaultSortOrder: 'descend',
             sorter: (a, b) => a.walletID - b.walletID,
         }, {
             title: 'Date Create',
@@ -57,19 +60,30 @@ class DebtReminder extends React.Component {
             key: 'operation',
             fixed: 'right',
             width: 100,
-            render: () => <a onClick={() => { }} style={{ color: '#1890ff', fontSize: '15px' }}><TransactionOutlined style={{ marginRight: '4px' }} />Pay</a>,
+            defaultSortOrder: 'descend',
+            sorter: (a, b) => a.status - b.status,
+
+            render: (values) => {
+
+                return (
+                    values.status == 0 ?
+                        <a onClick={() => { this.showPayDebtModalInComponent(values) }} style={{ color: '#1890ff', fontSize: '15px' }}><TransactionOutlined style={{ marginRight: '4px' }} />Pay
+                    </a> : <p style={{ color: 'green', fontSize: '15px', }}><CheckCircleFilled style={{ marginRight: '4px' }} />Paid</p>
+                )
+            }
+
         },];
         this.columnsDebtOwners = [{
             title: 'Debtor',
             dataIndex: 'debtor',
-            defaultSortOrder: 'descend',
+            // defaultSortOrder: 'descend',
             width: '18%',
             sorter: (a, b) => a.debtor.localeCompare(b.debtor),
         }, {
             title: 'Wallet ID',
             dataIndex: 'walletID',
             width: '18%',
-            defaultSortOrder: 'descend',
+            // defaultSortOrder: 'descend',
             sorter: (a, b) => a.walletID - b.walletID,
         }, {
             title: 'Date Create',
@@ -101,9 +115,18 @@ class DebtReminder extends React.Component {
             title: 'Action',
             key: 'operation',
             fixed: 'right',
+            defaultSortOrder: 'descend',
+            sorter: (a, b) => a.status - b.status,
             width: 100,
-            render: (text, record) => <Popconfirm title="Sure to delete?" onConfirm={() => this.onDeleteDebtOwner(record)}>
-                <a style={{ color: '#f5222d', fontSize: '15px' }}><DeleteFilled style={{ marginRight: '4px' }} />Delete</a>            </Popconfirm>
+            render: (values) => {
+                return (
+                    values.status == 0 ?
+                        <Popconfirm title="Sure to delete?" onConfirm={() => this.onDeleteDebtOwner(values)}>
+                            <a style={{ color: '#f5222d', fontSize: '15px' }}><DeleteFilled style={{ marginRight: '4px' }} />Delete</a>            </Popconfirm> : <p style={{ color: 'green', fontSize: '15px', }}><CheckCircleFilled style={{ marginRight: '4px' }} />Paid</p>
+                )
+            }
+
+
         },];
         this.state = {
             accessToken: localStorage.getItem(ACCESS_TOKEN_KEY) || '',
@@ -112,6 +135,9 @@ class DebtReminder extends React.Component {
             confirmLoading: false,
         }
     }
+    showPayDebtModalInComponent = (data) => {
+        this.props.showPayDebtModal(data);
+    }
     onFinish = values => {
         console.log('Success:', values);
     };
@@ -119,8 +145,8 @@ class DebtReminder extends React.Component {
     onFinishFailed = errorInfo => {
         console.log('Failed:', errorInfo);
     };
-    componentDidUpdate() {
-        const { isAction, name, messageError } = this.props;
+    componentDidUpdate = () => {
+        const { isAction, name, messageError, data, visiblePayDebt } = this.props;
         if (isAction) {
             const { accessToken, email } = this.state;
             var decoded = jwt(accessToken);
@@ -129,9 +155,23 @@ class DebtReminder extends React.Component {
             this.props.handleCancelModal();
         }
         if (name || messageError) {
-
-            this.formRef.current.setFieldsValue({ name })
+            console.log('formRef:', this.formRef)
+            if (this.formRef.current)
+                this.formRef.current.setFieldsValue({ name })
         }
+        if (visiblePayDebt) {
+            if (data) {
+                console.log('formRef2:', this.formRef2)
+                console.log('formRef:', this.formRef)
+                console.log('data:', data)
+                if (this.formRef2.current) {
+                    this.formRef2.current.setFieldsValue({ walletId: data.walletID, name: data.creditor, description: data.description, amount: data.money_debt })
+
+                }
+
+            }
+        }
+
     }
     onDeleteDebtOwner(record) {
         const { accessToken } = this.state;
@@ -139,11 +179,21 @@ class DebtReminder extends React.Component {
         console.log('record:', record)
         this.props.deleteDebtOwner(record.id_debt, accessToken);
     }
+    componentWillUnmount() {
+
+    }
     componentDidMount() {
         const { accessToken, email } = this.state;
         var decoded = jwt(accessToken);
         this.props.fetchGetDebtReminder(decoded.userId, accessToken)
         this.props.fetchGetDebtOwner(decoded.userId, accessToken)
+        // this.props.showPayDebtModal({});
+        // setTimeout( () => {     
+
+        // }, 350);
+        // this.props.handleCancelPayDebtModal();
+
+        // this.props.handleCancelPayDebtModal();
         // this.props.fetchTransactionHistory(email, accessToken);
 
         // fetch(`${URL_SERVER}/user/me`, {
@@ -169,9 +219,11 @@ class DebtReminder extends React.Component {
     }
     handlePressEnter = (values) => {
         let wallet_id = values.target.value;
+        const { accessToken } = this.state;
+
         console.log("wallet id: ", wallet_id)
         if (wallet_id) {
-            this.props.fetchGetNameByWalletId(wallet_id)
+            this.props.fetchGetNameByWalletId(wallet_id, accessToken)
         }
     }
     handleOk = () => {
@@ -197,10 +249,30 @@ class DebtReminder extends React.Component {
             confirmLoading: false,
         });
     }
+    handleOkPayDebt = () => {
+        const { accessToken, email } = this.state;
+        const { data, fetchTranferMoneyDebt } = this.props
+        const otp = this.inputRef.current.state.value;
+        let decoded = jwt(accessToken);
 
+        if (data && otp) {
+            data.otp = otp;
+            data.email = decoded.email;
+            data.decodeWalletIdDebtor = decoded.Number;
+            data.name = decoded.name;
+            fetchTranferMoneyDebt(data, accessToken);
+            console.log('data:', data)
+        }
+    }
+    onClickSendOTP = (e) => {
+        let accessToken = localStorage.getItem(ACCESS_TOKEN_KEY)
+        let decode = jwt(accessToken);
+        const { getOTP } = this.props;
+        getOTP(decode.email, accessToken);
+    }
     render() {
-        const { isLoading, debtReminders, messageError, walletId, debtOwner, name
-            , visible } = this.props;
+        const { isLoading, debtReminders, messageError, messageSuccess, walletId, debtOwner, data,
+            visible, visiblePayDebt, messageSuccessOTP } = this.props;
         console.log('debtReminders:', debtReminders);
         const { confirmLoading } = this.state;
         const layout = {
@@ -215,6 +287,7 @@ class DebtReminder extends React.Component {
             }} />);
         }
 
+        console.log('messageSuccessOTP:', messageSuccessOTP)
         const contentLayout = (
             <React.Fragment>
                 {messageError ?
@@ -222,6 +295,17 @@ class DebtReminder extends React.Component {
                         message: messageError,
                         icon: <WarningOutlined style={{ color: 'red' }} />,
                     }) : null}
+                {messageSuccess ?
+                    notification.open({
+                        message: messageSuccess,
+                        icon: <InfoCircleOutlined style={{ color: 'green' }} />,
+                    }) : null}
+                {messageSuccessOTP ?
+                    notification.open({
+                        message: messageSuccessOTP,
+                        icon: <MailFilled style={{ color: '#1890ff' }} />,
+                    }) : null}
+
                 <Card title="Debt Reminder List" bordered={false} style={{ width: '90%' }}>
 
                     <Table
@@ -262,6 +346,7 @@ class DebtReminder extends React.Component {
                     <Form
                         {...layout}
                         name="basic"
+
                         ref={this.formRef}
                         initialValues={{ walletId: '', remember: true }}
                         onFinish={this.onFinish()}
@@ -306,6 +391,119 @@ class DebtReminder extends React.Component {
 
                     </Form>
                 </Modal>
+
+                <Modal
+                    title="Pay Debt Reminder Modal"
+                    visible={visiblePayDebt}
+                    onOk={
+                        this.handleOkPayDebt
+                    }
+                    confirmLoading={confirmLoading}
+                    onCancel={() => { this.props.handleCancelPayDebtModal() }}
+                >
+                    {data &&
+
+                        (
+                            <div>
+                                <Row>
+                                    <Col span={12}>Debtor ID Wallet:</Col>
+                                    <Col span={12}><Input disabled value={data.walletID}></Input></Col>
+                                </Row>
+                                <Row>
+                                    <Col span={12}>Debtor:</Col>
+                                    <Col span={12}><Input disabled value={data.creditor}></Input></Col>
+                                </Row>
+                                <Row>
+                                    <Col span={12}>Amount Debt Transfer:</Col>
+                                    <Col span={12}> <InputNumber disabled value={data.money_debt} formatter={value => `đ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                        parser={value => value.replace(/\đ\s?|(,*)/g, '')} /></Col>
+                                </Row>
+                                <Row>
+                                    <Col span={12}>description:</Col>
+                                    <Col span={12}><Input.TextArea autoSize={{ minRows: 3, maxRows: 15 }} disabled value={data.description}></Input.TextArea></Col>
+                                </Row>
+
+                                <Row>
+                                    <Col span={12}>OTP:</Col>
+
+                                    <Col span={6}><Input ref={this.inputRef}  ></Input></Col>
+                                    <Col span={6}>
+                                        {/* <Countdown ref={this.countdownRef} date={Date.now() + 3000} renderer={this.renderer} />, */}
+                                        <Button onClick={this.onClickSendOTP} type="primary">
+                                            Send OTP
+                                </Button>
+                                    </Col>
+                                </Row>
+                            </div>)
+
+                    }
+                    {/* <Form
+                        {...layout}
+                        name="basic"
+                        ref={this.formRef2}
+                        wrappedComponentRef={(form) => {
+                            console.log('form:', form)
+                            this.formRef2 = form
+                        }}
+                        initialValues={{ walletId: '', remember: true }}
+                        onFinish={this.onFinish()}
+                        onFinishFailed={this.onFinishFailed()}
+                    >
+                        <Form.Item
+                            label="Debtor ID Wallet"
+                            name="walletId"
+                            rules={[{ required: true, message: 'Please input your Debtor ID Wallet!' }]}
+                        >
+                            <Input disabled={true} onPressEnter={this.handlePressEnter} type="number" />
+                        </Form.Item>
+                        <Form.Item
+                            label="Debtor"
+                            name="name"
+
+                        >
+                            <Input disabled={true} />
+                        </Form.Item>
+                        <Form.Item
+                            label="Amount"
+                            name="amount"
+                            rules={[{ required: true, message: 'Please input your Amount!' }]}
+                        >
+                            <InputNumber className="inputAmount"
+                                onChange={(e) => { }}
+                                disabled={true}
+                                formatter={value => `đ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                parser={value => value.replace(/\đ\s?|(,*)/g, '')}
+                            />
+                        </Form.Item>
+                        <Form.Item
+                            label="Description"
+                            name="description"
+
+                            rules={[{ required: true, message: 'Please input your Description!' }]}
+
+                        >
+                            <Input.TextArea disabled={true} autoSize={{ minRows: 3, maxRows: 15 }}
+                            />
+                        </Form.Item>
+                        <Form.Item
+                            label="OTP"
+                            name="otp"
+
+                        >
+                            <Input />
+                            <Button onClick={this.onClickSendOTP} type="primary">
+                                Send OTP
+                                </Button>
+                        </Form.Item>
+
+
+
+
+                    </Form>
+                
+                 */}
+                </Modal>
+
 
             </React.Fragment >
         )

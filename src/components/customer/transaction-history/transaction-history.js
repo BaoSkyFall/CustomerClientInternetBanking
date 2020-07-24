@@ -47,7 +47,8 @@ class TransactionHistory extends React.Component {
             render: values => (
 
                 <span className="">
-                    {values.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                    {values > 0 ? '+' + values.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : values.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+
                     } đ
                 </span>
 

@@ -106,9 +106,9 @@ const trackRecipientLocal = (walletNumber, accessToken) => {
                         type: TRACK_RECIPIENT_LOCAL_SUCCESS,
                         emailRecipient: res.data.data[0].email,
                         fullNameRecipient: res.data.data[0].fullname,
-                        usernameRecipient : res.data.data[0].username,
-                        isLocalRecipient : res.data.data[0].isLocal,
-                    
+                        usernameRecipient: res.data.data[0].username,
+                        isLocalRecipient: res.data.data[0].isLocal,
+
                         bankRecipient: res.data.data[0].name,
                     })
                 }
@@ -248,13 +248,19 @@ const getOTP = (email, accessToken) => {
                 if (!res.data.errors) {
                     dispatch({
                         type: GET_OTP_SUCCESS,
-                        messageSuccess: res.data.data.message
+                        messageSuccess: res.data.message
                     });
+
+                    dispatch({
+                        type: GET_OTP_SUCCESS,
+                        messageSuccess: ''
+                    });
+
                 }
                 else {
                     dispatch({
                         type: GET_OTP_FAIL,
-                        messageError: res.data.data.message
+                        messageError: res.data.message
                     });
                 }
             })
@@ -279,7 +285,7 @@ const toggleModalAddRecipient = () => {
     return (dispatch) => {
         dispatch({
             type: TOGGLE_MODAL_ADD_RECIPIENT,
-            
+
         });
     }
 }

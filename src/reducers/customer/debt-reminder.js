@@ -18,7 +18,9 @@ import {
     DELETE_DEBT_OWNER_SUCCESS,
     DELETE_DEBT_OWNER_FAIL,
     SHOW_ADD_MODAL,
-    HANDLE_CANCEL_MODAL
+    HANDLE_CANCEL_MODAL,
+    SHOW_PAY_DEBT_MODAL,
+    HANDLE_CANCEL_PAY_DEBT_MODAL
 
 } from '../../constants/customer/debt-reminder';
 const initialState = {
@@ -29,10 +31,12 @@ const initialState = {
     messageError: '',
     name: '',
     walletId: '',
-    idDebtor:'',
+    idDebtor: '',
+    data: null,
     isLoading: false,
-    
+    messageSuccessOTP:'',
     visible: false,
+    visiblePayDebt: false,
     confirmLoading: false,
     isAction: false,
     debtorModal: null,
@@ -44,9 +48,9 @@ export default function debtReminderReducer(state = initialState, action) {
             return {
                 ...state,
                 isLoading: true,
-                
-                name:'',
-                idDebtor:''
+
+                name: '',
+                idDebtor: ''
             }
         }
         case FETCH_GET_DEBT_REMINDER_SUCCESS: {
@@ -55,8 +59,8 @@ export default function debtReminderReducer(state = initialState, action) {
                 debtReminders: action.debtReminders,
                 isLoading: false,
                 isAction: false,
-                name:'',
-                idDebtor:''
+                name: '',
+                idDebtor: ''
 
             }
         }
@@ -72,6 +76,9 @@ export default function debtReminderReducer(state = initialState, action) {
         case FETCH_TRANFER_MONEY_DEBT: {
             return {
                 ...state,
+                messageError:'',
+                messageSuccess:'',
+                messageSuccessOTP:''
                 // isLoading:true
             }
         }
@@ -81,8 +88,9 @@ export default function debtReminderReducer(state = initialState, action) {
                 messageSuccess: action.messageSuccess,
                 isLoading: false,
                 isAction: false,
-                name:'',
-                idDebtor:''
+                name: '',
+                idDebtor: '',
+                data: null
 
             }
         }
@@ -97,8 +105,8 @@ export default function debtReminderReducer(state = initialState, action) {
         case FETCH_GET_DEBT_OWNER: {
             return {
                 ...state,
-                name:'',
-                idDebtor:''
+                name: '',
+                idDebtor: ''
                 // isLoading:true
             }
         }
@@ -108,8 +116,8 @@ export default function debtReminderReducer(state = initialState, action) {
                 debtOwner: action.debtOwner,
                 isLoading: false,
                 isAction: false,
-                name:'',
-                idDebtor:''
+                name: '',
+                idDebtor: ''
             }
         }
         case FETCH_GET_DEBT_OWNER_FAIL: {
@@ -123,7 +131,7 @@ export default function debtReminderReducer(state = initialState, action) {
         case ADD_DEBT_REMINDER: {
             return {
                 ...state,
-                isAction:true,
+                isAction: true,
                 // isLoading:true
             }
         }
@@ -132,7 +140,7 @@ export default function debtReminderReducer(state = initialState, action) {
                 ...state,
                 messageSuccess: action.messageSuccess,
                 isLoading: false,
-                isAction:true,
+                isAction: true,
 
             }
         }
@@ -222,6 +230,26 @@ export default function debtReminderReducer(state = initialState, action) {
                 debtorModal: null,
                 messageSuccess: '',
                 messageError: '',
+            }
+        }
+        case SHOW_PAY_DEBT_MODAL: {
+            return {
+                ...state,
+                visiblePayDebt:true,
+                messageSuccessOTP:'',
+                data: action.data
+            }
+
+        }
+        case HANDLE_CANCEL_PAY_DEBT_MODAL: {
+            return {
+                ...state,
+                visiblePayDebt:false,
+                messageError:'',
+                messageSuccess:'',
+                messageSuccessOTP:'',
+                data:null,
+
             }
         }
         default:
