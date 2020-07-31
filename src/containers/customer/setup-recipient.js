@@ -7,6 +7,7 @@ import {
   deleteRecipient,
   resetStore,
   addRecipientLocal,
+  addRecipientForeign,
   toggleModalAddRecipient,
   changeTabPanel
 } from '../../actions/customer/setup-recipient';
@@ -26,7 +27,8 @@ const mapStateToProps = (state) => {
     fullNameRecipient: state.internalTransferReducer.fullNameRecipient,
     usernameRecipient: state.internalTransferReducer.usernameRecipient,
     isLocalRecipient: state.internalTransferReducer.isLocalRecipient,
-
+    messageErrorAddModal: state.internalTransferReducer.messageError,
+    messageSuccessAddModal:state.internalTransferReducer.messageSuccess
   }
 };
 
@@ -34,12 +36,13 @@ const mapDispatchToProps = (dispatch) => {
   return {
     fetchRecipients: (id, accessToken) => dispatch(fetchRecipients(id, accessToken)),
     addRecipientLocal: (username, receiverWalletNumber, remindName,usernameRecipient,isLocalAdd, accessToken) => dispatch(addRecipientLocal(username, receiverWalletNumber, remindName,usernameRecipient,isLocalAdd, accessToken)),
+    addRecipientForeign: (username, receiverWalletNumber, remindName,bankLinkId,isLocalAdd, accessToken) => dispatch(addRecipientForeign(username, receiverWalletNumber, remindName,bankLinkId,isLocalAdd, accessToken)),
     updateRecipient: (email, walletNumber, remindName,recipients, accessToken) => dispatch(updateRecipient(email, walletNumber, remindName, recipients,accessToken)),
     deleteRecipient: (data, recipients, accessToken) => dispatch(deleteRecipient(data, recipients, accessToken)),
     resetStore: () => dispatch(resetStore()),
     toggleModalAddRecipient: (isShowModalAddRecipient) => dispatch(toggleModalAddRecipient(isShowModalAddRecipient)),
     trackRecipientLocal: (walletNumber, accessToken) => dispatch(trackRecipientLocal(walletNumber, accessToken)),
-    trackRecipientForeign: (walletNumber, accessToken) => dispatch(trackRecipientForeign(walletNumber, accessToken)),
+    trackRecipientForeign: (bankid,walletNumber, accessToken) => dispatch(trackRecipientForeign(bankid,walletNumber, accessToken)),
     changeTabPanel: () => dispatch(changeTabPanel()),
     
   }

@@ -63,6 +63,7 @@ const mapDispatchToProps = (dispatch) => {
     toggleModalTransfer: () => dispatch(toggleModalTransfer()),
     toggleModalAddRecipient: (isShowModalAddRecipient) => dispatch(toggleModalAddRecipient(isShowModalAddRecipient)),
     addRecipientLocal: (username, receiverWalletNumber, remindName,usernameRecipient,isLocalAdd, accessToken) => dispatch(addRecipientLocal(username, receiverWalletNumber, remindName,usernameRecipient,isLocalAdd, accessToken)),
+    // addRecipientForeign: (username, receiverWalletNumber, remindName,bankLinkId,isLocalAdd, accessToken) => dispatch(addRecipientForeign(username, receiverWalletNumber, remindName,bankLinkId,isLocalAdd, accessToken)),
     trackRecipientLocal: (walletNumber, accessToken) => dispatch(trackRecipientLocal(walletNumber, accessToken)),
     trackRecipientForeign: (walletNumber, accessToken) => dispatch(trackRecipientForeign(walletNumber, accessToken)),
     setBalance: (balance) => dispatch(setBalance(balance)),
