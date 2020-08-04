@@ -21,8 +21,8 @@ class SignInForm extends React.Component {
   onFinish = (values) => {
     console.log("values:", values);
 
-    const { handleSignIn } = this.props;
-    handleSignIn(values);
+    const { sendOTP } = this.props;
+    sendOTP(values);
   };
   onFinishFail = (err) => {
     console.log("err:", err);

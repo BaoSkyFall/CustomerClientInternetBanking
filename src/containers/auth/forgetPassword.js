@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import ForgetPassword from "../../components/auth/forgetPassword";
-import {} from "../../actions/auth";
+import { doSendOTP } from "../../actions/auth";
 
 class ForgetPasswordContainer extends Component {
   render() {
@@ -22,7 +22,7 @@ const mapStateToProps = (state) => {
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    // handleSignIn: (infoUser) => dispatch(doSignIn(infoUser)),
+    sendOTP: (email) => dispatch(doSendOTP(email)),
   };
 };
 
