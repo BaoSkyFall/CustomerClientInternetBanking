@@ -26,10 +26,14 @@ class SignInForm extends React.Component {
     sendOTP(values);
   };
   onSendNewPassword = (values) => {
-    console.log("values:", values);
-
-    // const { sendOTP } = this.props;
-    // sendOTP(values);
+    let { email } = this.props;
+    const { sendNewPassword } = this.props;
+    sendNewPassword(
+      values.otp,
+      Date.now() / 1000,
+      values.password,
+      email.email
+    );
   };
   onFinishFail = (err) => {
     console.log("err:", err);
@@ -91,7 +95,7 @@ class SignInForm extends React.Component {
             <Input type="number" placeholder="OTP code" />
           </FormItem>
           <FormItem
-            name="NewPassword"
+            name="password"
             rules={[
               {
                 required: true,
@@ -146,7 +150,7 @@ class SignInForm extends React.Component {
       <React.Fragment>
         <Card className="signIn-left"></Card>
         <Card>
-          {step === 2 ? (
+          {step === 1 ? (
             <Form onSubmit={this.handleSubmit} className="form-signin">
               <legend className="title-signin">
                 <h2>Forget password</h2>

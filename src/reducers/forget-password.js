@@ -12,6 +12,7 @@ const initialState = {
   step: 1,
   errorMessage: "",
   isLoading: false,
+  email: "",
 };
 
 export default function forgetPasswordReducer(state = initialState, action) {
@@ -27,6 +28,7 @@ export default function forgetPasswordReducer(state = initialState, action) {
         ...state,
         step: 2,
         isLoading: false,
+        email: action.email,
       };
     }
     case SEND_EMAIL_FORGET_PASSWORD_FAILED: {

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import ForgetPassword from "../../components/auth/forgetPassword";
-import { doSendOTP } from "../../actions/auth";
+import { doSendOTP, doSendNewPassword } from "../../actions/auth";
 
 class ForgetPasswordContainer extends Component {
   render() {
@@ -16,6 +16,7 @@ class ForgetPasswordContainer extends Component {
 const mapStateToProps = (state) => {
   return {
     step: state.forgetPasswordReducer.step,
+    email: state.forgetPasswordReducer.email,
     errorMessage: state.forgetPasswordReducer.errorMessage,
     isLoading: state.forgetPasswordReducer.isLoading,
   };
@@ -23,6 +24,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     sendOTP: (email) => dispatch(doSendOTP(email)),
+    sendNewPassword: (otp, time, NewPassword, email) =>
+      dispatch(doSendNewPassword(otp, time, NewPassword, email)),
   };
 };
 

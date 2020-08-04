@@ -11,6 +11,9 @@ import {
   SEND_EMAIL_FORGET_PASSWORD,
   SEND_EMAIL_FORGET_PASSWORD_SUCCESS,
   SEND_EMAIL_FORGET_PASSWORD_FAILED,
+  SEND_OTP_AND_NEW_PASSWORD,
+  SEND_OTP_AND_NEW_PASSWORD_SUCCESS,
+  SEND_OTP_AND_NEW_PASSWORD_FAILED,
 } from "../constants/auth";
 import { URL_SERVER } from "../configs/server";
 import {
@@ -19,6 +22,7 @@ import {
   EMAIL_KEY,
 } from "../configs/client";
 import jwt from "jwt-decode";
+import Swal from "sweetalert2";
 const firebase = require("firebase");
 
 //#region  auth
@@ -150,10 +154,16 @@ const doSendOTP = (email) => {
     })
       .then((res) => res.json())
       .then((res) => {
-        dispatch({
-          type: SEND_EMAIL_FORGET_PASSWORD_SUCCESS,
-          signinSuccess: true,
-        });
+        if (res.returnCode === 1)
+          dispatch({
+            type: SEND_EMAIL_FORGET_PASSWORD_SUCCESS,
+            email: email,
+          });
+        else
+          dispatch({
+            type: SEND_EMAIL_FORGET_PASSWORD_FAILED,
+            errorMessage: res.message,
+          });
       })
       .catch((error) => {
         console.log(error);
@@ -164,5 +174,58 @@ const doSendOTP = (email) => {
       });
   };
 };
+
+const doSendNewPassword = (otp, time, NewPassword, email) => {
+  return (dispatch) => {
+    dispatch({
+      type: SEND_OTP_AND_NEW_PASSWORD,
+    });
+    let data = { otp, time, NewPassword, email };
+    fetch(`${URL_SERVER}/api/users/sendOTPAndNewPassword`, {
+      method: "POST",
+      headers: new Headers({
+        "Content-Type": "application/json",
+      }),
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.returnCode === 1) {
+          dispatch({
+            type: SEND_OTP_AND_NEW_PASSWORD_SUCCESS,
+          });
+          Swal.fire(
+            "Change password successfully",
+            res.message,
+            "success"
+          ).then((result) => {
+            if (result.value) {
+              window.location.href = "/";
+            }
+          });
+        } else {
+          dispatch({
+            type: SEND_OTP_AND_NEW_PASSWORD_FAILED,
+            errorMessage: res.message,
+          });
+          Swal.fire("Change password failed", res.message, "error");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        dispatch({
+          type: SEND_OTP_AND_NEW_PASSWORD_FAILED,
+          errorMessage: error.messageError,
+        });
+      });
+  };
+};
 //#endregion forger password
-export { doSignUp, doSignIn, verifyAccessToken, resetStatus, doSendOTP };
+export {
+  doSignUp,
+  doSignIn,
+  verifyAccessToken,
+  resetStatus,
+  doSendOTP,
+  doSendNewPassword,
+};
