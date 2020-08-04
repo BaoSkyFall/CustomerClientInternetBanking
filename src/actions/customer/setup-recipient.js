@@ -118,6 +118,67 @@ const deleteRecipient = (data, recipients, accessToken) => {
     }
 }
 
+const addRecipientForeign = (username, receiverWalletNumber, remindName, bank_LinkId, isLocalAdd, accessToken) => {
+    return (dispatch) => {
+        dispatch({
+            type: ADD_RECIPIENT
+        });
+        console.log('accessToken:', accessToken)
+        return callApi(`api/recipient/addRecipientForeign`, 'POST', { id_recipient: null, id: username, bank_LinkId: bank_LinkId, name_recipient: remindName, isLocal: isLocalAdd, walletId: receiverWalletNumber }, { x_accesstoken: accessToken })
+            .then(res => {
+                if (res.data.returnCode ==1) {
+                    dispatch({
+                        type: ADD_RECIPIENT_SUCCESS,
+                        messageSuccess: `Create receiver record successfully!`
+                    });
+                    callApi(`api/recipient/getAllRecipient/${username}`, 'GET', {}, { x_accesstoken: accessToken })
+                        .then(res => {
+                            console.log('res All recipient:', res)
+
+                            if (!res.data.errors) {
+                                dispatch({
+                                    type: FETCH_RECIPIENTS_SUCCESS,
+                                    recipients: res.data.data
+                                });
+                            }
+                            else {
+                                dispatch({
+                                    type: FETCH_RECIPIENTS_FAIL,
+                                    messageError: res.data.message
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.log('error:', error)
+                            dispatch({
+                                type: FETCH_RECIPIENTS_FAIL,
+                                messageError: "Can't connect to server"
+                            });
+                        })
+
+                }
+                else if (res.data.returnCode == -1) {
+                    dispatch({
+                        type: ADD_RECIPIENT_FAIL,
+                        messageError: res.data.message
+                    });
+                }
+                else
+                {
+                    dispatch({
+                        type: ADD_RECIPIENT_FAIL,
+                        messageError: res.data.message
+                    });
+                }
+            }).catch(error => {
+                console.log('error:', error)
+                dispatch({
+                    type: ADD_RECIPIENT_FAIL,
+                    messageError: 'Error might Cause from Server'
+                });
+            })
+    }
+}
 const addRecipientLocal = (username, receiverWalletNumber, remindName, usernameRecipient, isLocalAdd, accessToken) => {
     return (dispatch) => {
         dispatch({
@@ -211,6 +272,7 @@ export {
     updateRecipient,
     deleteRecipient,
     addRecipientLocal,
+    addRecipientForeign,
     changeTabPanel,
     toggleModalAddRecipient,
     resetStore

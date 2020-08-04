@@ -142,6 +142,14 @@ export default function internalTransferReducer(state = initialState, action) {
                 isLoading: false
             }
         }
+        case TRACK_RECIPIENT_FOREIGN_FAIL: {
+
+            return {
+                ...state,
+                messageError: action.messageError
+            }
+        }
+        
         case GET_OTP_SUCCESS: {
             console.log('action GET OTP SUCCESS:', action)
             return {

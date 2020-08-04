@@ -155,33 +155,42 @@ const fetchRecipientsForeign = (id, accessToken) => {
     }
 }
 
-const trackRecipientForeign = (walletNumber, accessToken) => {
+const trackRecipientForeign = (idBank,credit_number, accessToken) => {
     return (dispatch) => {
         dispatch({
             type: TRACK_RECIPIENT_FOREIGN
         });
 
-        return callApi(`api/recipient/trackRecipientForeign/${walletNumber}`, 'GET', {}, { x_accessToken: accessToken })
+        return callApi(`api/partner-bank/info-partner/${idBank}/${credit_number}`, 'GET', {}, { x_accessToken: accessToken })
             .then(res => {
-                console.log('res:', res.data.data[0])
-                if (!res.data.errors) {
+                console.log('res:', res.data)
+                if (res.data.returnCode ==1) {
                     dispatch({
                         type: TRACK_RECIPIENT_FOREIGN_SUCCESS,
-                        fullNameRecipient: res.data.data[0].fullname,
-                        bankRecipient: res.data.data[0].Name,
+                        fullNameRecipient: `${res.data.data.lastname} ${res.data.data.firstname}` ,
+                        bankRecipient: idBank,
+
                     })
                 }
                 else {
                     dispatch({
                         type: TRACK_RECIPIENT_FOREIGN_FAIL,
-                        messageError: res.data.message
+                        messageError: `Fail track Recipient Foreign Bank with ${credit_number}`
+                    });
+                    dispatch({
+                        type: TRACK_RECIPIENT_FOREIGN_FAIL,
+                        messageError: ``
                     });
                 }
             })
             .catch(error => {
                 dispatch({
                     type: TRACK_RECIPIENT_FOREIGN_FAIL,
-                    messageError: 'Fail track Recipient'
+                    messageError: `Fail track Recipient Foreign Bank with ${credit_number}`
+                });
+                dispatch({
+                    type: TRACK_RECIPIENT_FOREIGN_FAIL,
+                    messageError: ``
                 });
             })
     }

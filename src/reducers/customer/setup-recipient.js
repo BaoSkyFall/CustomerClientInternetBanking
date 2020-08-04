@@ -22,6 +22,8 @@ const initialState = {
     isLocalAdd: true,
     messageSuccess: '',
     messageError: '',
+    messageSuccessAddModal: '',
+    messageErrorAddModal: '',
     statusDeleteRecipient: 0,
     isShowModalAddRecipient: false
 };
@@ -93,7 +95,10 @@ export default function setupRecipientReducer(state = initialState, action) {
         case TOGGLE_MODAL_ADD_RECIPIENT: {
             return {
                 ...state,
-                isShowModalAddRecipient: action.isShowModalAddRecipient
+                messageSuccessAddModal: '',
+                messageErrorAddModal: '',
+                isShowModalAddRecipient: action.isShowModalAddRecipient,
+                isLocalAdd: true
             }
         }
         case RESET_STORE: {
@@ -101,12 +106,16 @@ export default function setupRecipientReducer(state = initialState, action) {
                 ...state,
                 messageSuccess: '',
                 messageError: '',
+                messageSuccessAddModal: '',
+                messageErrorAddModal: '',
                 isShowModalAddRecipient: false,
             }
         }
         case CHANGE_TAB_PANEL: {
             return {
                 ...state,
+                messageErrorAddModal: '',
+                messageSuccessAddModal: '',
                 isLocalAdd: !state.isLocalAdd
             }
         }
