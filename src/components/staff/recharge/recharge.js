@@ -45,6 +45,7 @@ class Recharge extends Component {
                 walletNumber: values.accountNumber,
                 amount: values.amount
             }
+            console.log('dt:', dt)
             var accessToken = window.localStorage.getItem('accesstoken')
             this.props.updateBalance(dt, accessToken)
         });
@@ -79,6 +80,8 @@ class Recharge extends Component {
         let accessToken = window.localStorage.getItem('accesstoken');
         let data = {
             username: values.username,
+            id: values.walletNumber,
+
             money: values.amount
         }
         this.props.updateBalance(data, accessToken)

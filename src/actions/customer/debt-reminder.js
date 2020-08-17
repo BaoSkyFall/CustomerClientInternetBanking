@@ -26,6 +26,10 @@ import {
 } from '../../constants/customer/debt-reminder.js';
 import { URL_SERVER, URL_SERVER_DEPLOY } from '../../configs/server';
 import callApi from '../../ultis/callApi';
+import moment from 'moment'
+import jwt from 'jwt-decode';
+
+const firebase = require("firebase");
 
 
 const fetchGetDebtReminder = (id_debtor, accessToken) => {
@@ -56,6 +60,20 @@ const fetchGetDebtReminder = (id_debtor, accessToken) => {
 
     }
 }
+function pushNotificationFireBase(string, doc) {
+    console.log('doc:', doc)
+    firebase
+        .firestore()
+        .collection('notifications')
+        .doc(doc.toString())
+        .update({
+            listNotify: firebase.firestore.FieldValue.arrayUnion({
+                content: string,
+
+            }),
+            isRead: false
+        })
+}
 const fetchTranferMoneyDebt = (data, accessToken) => {
     return (dispatch) => {
         dispatch({ type: FETCH_TRANFER_MONEY_DEBT });
@@ -68,29 +86,36 @@ const fetchTranferMoneyDebt = (data, accessToken) => {
                         type: FETCH_TRANFER_MONEY_DEBT_SUCCESS,
                         messageSuccess: res.data.message
                     });
+                    let decoded = jwt(accessToken);
+                    console.log('data Transfer:', data);
+                    console.log('data InTransferDebt:', data);
+                    let date = moment(Date.now()).format("DD/MM/YYYY hh:mm a");
+                    pushNotificationFireBase(`You have paid for your debt with ${data.money_debt } VNĐ success on ${date} to ${data.creditor} with desciption ${data.description.slice(0,20)}...`, decoded.walletId);
+                    pushNotificationFireBase(`You has been credited ${data.money_debt } VNĐ success on ${date} from ${data.name}  with desciption ${data.description.slice(0,20)}...`, data.walletID);
                     callApi(`api/debt-reminder/getDebtReminder/${data.id_debtor}`, 'GET', {}, { x_accessToken: accessToken })
-                    .then(res => {
-                        console.log('res:', res);
-                        if (res.status === 200) {
-                            dispatch({
-                                type: FETCH_GET_DEBT_REMINDER_SUCCESS,
-                                debtReminders: res.data.data
-                            });
-                        }
-                        else {
+                        .then(res => {
+                            console.log('res:', res);
+                            if (res.status === 200) {
+                                dispatch({
+                                    type: FETCH_GET_DEBT_REMINDER_SUCCESS,
+                                    debtReminders: res.data.data
+                                });
+
+                            }
+                            else {
+                                dispatch({
+                                    type: FETCH_GET_DEBT_REMINDER_FAIL,
+                                    messageError: res.data.message
+                                });
+                            }
+                        })
+                        .catch((err) => {
                             dispatch({
                                 type: FETCH_GET_DEBT_REMINDER_FAIL,
-                                messageError: res.data.message
+                                messageError: "Error Server"
                             });
-                        }
-                    })
-                    .catch((err) => {
-                        dispatch({
-                            type: FETCH_GET_DEBT_REMINDER_FAIL,
-                            messageError: "Error Server"
-                        });
-                    })
-        
+                        })
+
                     dispatch({
                         type: HANDLE_CANCEL_PAY_DEBT_MODAL
                     })
@@ -101,11 +126,11 @@ const fetchTranferMoneyDebt = (data, accessToken) => {
                         type: FETCH_TRANFER_MONEY_DEBT_FAIL,
                         messageError: res.data.message
                     });
-                        dispatch({
-                            type: FETCH_TRANFER_MONEY_DEBT_FAIL,
-                            messageError: ''
-                        });
-               
+                    dispatch({
+                        type: FETCH_TRANFER_MONEY_DEBT_FAIL,
+                        messageError: ''
+                    });
+
                 }
                 else if (res.data.returnCode == 0) {
                     dispatch({

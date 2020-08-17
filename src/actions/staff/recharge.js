@@ -7,6 +7,7 @@ export const actRechargeRequest = (data, accessToken) => {
     console.log(data)
     return (dispatch) => {
         dispatch(actRecharge());
+        console.log('data123124124124:', data)
         return callApi(`api/money/addMoney`, 'POST', data, { x_accessToken: accessToken })
             .then(res => {
                 if (res.status === 200) {

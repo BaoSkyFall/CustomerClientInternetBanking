@@ -10,6 +10,7 @@ import {
     FETCH_RECIPIENTS_FOREIGN_SUCCESS,
     FETCH_RECIPIENTS_FOREIGN_FAIL,
     RESET_STORE,
+    RESET_MESSAGE,
     SET_BALANCE,
     SET_VALUES_TRANFER,
     SEND_TRANSFER_INFORMATION,
@@ -231,12 +232,18 @@ const sendTransferInformation = (data, accessToken) => {
                         // idTransaction: res.data.data.created_verification._id,
                         messageSuccess: res.data.message
                     });
+                    dispatch({
+                        type: RESET_MESSAGE
+                    })
                 }
                 else {
                     dispatch({
                         type: SEND_TRANSFER_INFORMATION_FAIL,
                         messageError: res.data.message
                     });
+                    dispatch({
+                        type: RESET_MESSAGE
+                    })
                 }
             })
             .catch(error => {
@@ -271,6 +278,9 @@ const getOTP = (email, accessToken) => {
                         type: GET_OTP_FAIL,
                         messageError: res.data.message
                     });
+                    dispatch({
+                        type: RESET_MESSAGE
+                    })
                 }
             })
             .catch(error => {
@@ -279,6 +289,9 @@ const getOTP = (email, accessToken) => {
                     type: GET_OTP_FAIL,
                     messageError: "Can't send OTP it may cause from server"
                 });
+                dispatch({
+                    type: RESET_MESSAGE
+                })
             })
     }
 }

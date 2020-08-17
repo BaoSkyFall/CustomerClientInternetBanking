@@ -1,6 +1,7 @@
 import React from 'react';
-import { Table, notification, Spin } from 'antd';
+import { Table, notification, Select, Spin } from 'antd';
 import { Redirect } from 'react-router-dom';
+import { } from 'antd';
 
 import './style.css';
 import { ACCESS_TOKEN_KEY, EMAIL_KEY } from '../../../configs/client';
@@ -8,6 +9,8 @@ import { formatTransaction } from '../../../ultis/transaction';
 import { URL_SERVER } from '../../../configs/server';
 import { WarningOutlined } from '@ant-design/icons';
 import jwt from 'jwt-decode'
+const { Option } = Select;
+
 class TransactionHistory extends React.Component {
     constructor(props) {
         super(props);
@@ -35,14 +38,14 @@ class TransactionHistory extends React.Component {
         {
             title: 'Date',
             dataIndex: 'time',
-            defaultSortOrder: 'descend',
+            // defaultSortOrder: 'descend',
             width: '20%',
             sorter: (a, b) => a.time.localeCompare(b.time),
         }, {
             title: 'Amount (VND)',
             className: 'column-money',
             dataIndex: 'money_transfer',
-            defaultSortOrder: 'descend',
+            // defaultSortOrder: 'descend',
             width: '15%',
             render: values => (
 
@@ -57,19 +60,29 @@ class TransactionHistory extends React.Component {
         }, {
             title: "Description",
             dataIndex: 'description',
-            defaultSortOrder: 'descend',
+            // defaultSortOrder: 'descend',
         }];
 
         this.state = {
             accessToken: localStorage.getItem(ACCESS_TOKEN_KEY) || '',
-            email: localStorage.getItem(EMAIL_KEY) || ''
+            email: localStorage.getItem(EMAIL_KEY) || '',
+            isAll: true,
         }
     }
-
-    componentDidMount() {
-        const { accessToken, email } = this.state;
+    handleChangeOption = (value) =>{
+        console.log('value:', value)
+        const { accessToken, isAll } = this.state;
+        this.setState({
+            isAll: value
+        })
         let decode = jwt(accessToken)
-        this.props.fetchTransactionHistoryLocal(decode.userId, accessToken);
+        this.props.fetchTransactionHistoryLocal(decode.userId, accessToken,value);
+        
+      }
+    componentDidMount() {
+        const { accessToken, isAll } = this.state;
+        let decode = jwt(accessToken)
+        this.props.fetchTransactionHistoryLocal(decode.userId, accessToken,isAll);
 
         // fetch(`${URL_SERVER}/user/me`, {
         //     headers: {
@@ -94,6 +107,7 @@ class TransactionHistory extends React.Component {
     }
 
     render() {
+        const {isAll}= this.state;
         const { isLoading, transactionHistory, messageError } = this.props;
         console.log('transactionHistory:', transactionHistory)
         if (messageError === 'AccessToken is not valid') {
@@ -110,13 +124,19 @@ class TransactionHistory extends React.Component {
                         message: messageError,
                         icon: <WarningOutlined style={{ color: 'red' }} />,
                     }) : null}
+                <Select defaultValue={isAll.toString()} style={{ width: 120 }} onChange={this.handleChangeOption}>
+                    <Option value="true">All</Option>
+                    <Option value="false">In Month</Option>
 
-                <Table
+
+                </Select>
+                <br />
+                <br />                <Table
                     columns={this.columns}
                     dataSource={transactionHistory}
                     onChange={this.handleChange}
                     pagination={{ pageSize: 10 }}
-                    scroll={{ y: '60vh' }}
+                    scroll={{ y: '80vh' }}
                     bordered />
             </React.Fragment>
         )

@@ -13,7 +13,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    fetchTransactionHistoryLocal: (id, accessToken) => dispatch(fetchTransactionHistoryLocal(id, accessToken)),
+    fetchTransactionHistoryLocal: (id, accessToken,isAll) => dispatch(fetchTransactionHistoryLocal(id, accessToken,isAll)),
     resetStore: () => dispatch(resetStore())
   }
 }

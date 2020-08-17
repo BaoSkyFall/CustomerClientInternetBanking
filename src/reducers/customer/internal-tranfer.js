@@ -9,6 +9,7 @@ import {
     FETCH_RECIPIENTS_FOREIGN_SUCCESS,
     FETCH_RECIPIENTS_FOREIGN_FAIL,
     RESET_STORE,
+    RESET_MESSAGE,
     SET_BALANCE,
     SET_VALUES_TRANFER,
     SEND_TRANSFER_INFORMATION,
@@ -63,6 +64,8 @@ export default function internalTransferReducer(state = initialState, action) {
         case SEND_TRANSFER_INFORMATION: {
             return {
                 ...state,
+                messageError: '',
+                messageSuccess: '',
                 isLoading: true
             }
         }
@@ -128,9 +131,9 @@ export default function internalTransferReducer(state = initialState, action) {
             }
         }
         case SET_VALUES_TRANFER: {
-            return{
+            return {
                 ...state,
-                values:action.values
+                values: action.values
             }
         }
         case TRACK_RECIPIENT_FOREIGN_SUCCESS: {
@@ -149,13 +152,13 @@ export default function internalTransferReducer(state = initialState, action) {
                 messageError: action.messageError
             }
         }
-        
+
         case GET_OTP_SUCCESS: {
             console.log('action GET OTP SUCCESS:', action)
             return {
                 ...state,
                 messageSuccess: action.messageSuccess,
-                messageError:'',
+                messageError: '',
                 isLoading: false
             }
         }
@@ -187,13 +190,20 @@ export default function internalTransferReducer(state = initialState, action) {
                 isLoading: false
             }
         }
+        case RESET_MESSAGE: {
+            return {
+                ...state,
+                messageSuccess: '',
+                messageError: '',
+            }
+        }
+   
         case RESET_STORE: {
             return {
                 ...state,
                 isLocal: !state.isLocal,
                 idTransaction: '',
-                messageSuccess: '',
-                messageError: '',
+
                 isShowModalTransfer: false,
                 isLoading: false,
                 bankRecipient: '',

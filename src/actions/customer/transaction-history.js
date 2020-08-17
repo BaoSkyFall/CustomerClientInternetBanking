@@ -8,10 +8,10 @@ import {
 import { URL_SERVER_DEPLOY } from '../../configs/server';
 import callApi from '../../ultis/callApi';
 
-const fetchTransactionHistoryLocal = (id, accessToken) => {
+const fetchTransactionHistoryLocal = (id, accessToken,isAll=true) => {
     return (dispatch) => {
         dispatch({ type: FETCH_TRANSACTION_HISTORY_LOCAL });
-        return callApi(`api/money/historyLocal/${id}`, 'GET', {}, { x_accessToken: accessToken })
+        return callApi(`api/money/historyLocal?id=${id}&isAll=${isAll}`, 'GET', {}, { x_accessToken: accessToken })
         .then(res => {
             console.log('res:', res)
             if (res.data.returnCode == 1) {
