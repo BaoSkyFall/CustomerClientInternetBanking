@@ -13,7 +13,7 @@ const fetchTransactionHistoryLocal = (id, accessToken,isAll=true) => {
         dispatch({ type: FETCH_TRANSACTION_HISTORY_LOCAL });
         return callApi(`api/money/historyLocal?id=${id}&isAll=${isAll}`, 'GET', {}, { x_accessToken: accessToken })
         .then(res => {
-            console.log('res:', res)
+            console.log('resHistory:', res)
             if (res.data.returnCode == 1) {
                 dispatch({
                     type: FETCH_TRANSACTION_HISTORY_LOCAL_SUCCESS,

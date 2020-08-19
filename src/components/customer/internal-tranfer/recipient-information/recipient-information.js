@@ -11,6 +11,8 @@ class Recipient extends Component {
 
         this.state = {
             value: '',
+            bankcode: 'kianto',
+            recipientsForegin: null,
         }
     }
 
@@ -24,7 +26,8 @@ class Recipient extends Component {
     }
     handleSelectForeign = (value) => {
         const { accessToken } = this.props;
-        this.props.trackRecipientForeign(value, accessToken);
+        const { bankcode } = this.state;
+        this.props.trackRecipientForeign(bankcode, value, accessToken);
     }
 
     handleAdd = () => {
@@ -55,13 +58,19 @@ class Recipient extends Component {
 
         return options;
     }
+    handleSelectForeignBank = (value) => {
+        console.log('value:', value)
+        this.setState({
+            bankcode: value
+        })
+    }
     recipientForeignWalletsLayout = () => {
         const { recipientsForeign } = this.props;
         let options = [];
 
         if (recipientsForeign.length === 0)
             return (
-                <Option value=''>Not RecipientsForeign</Option>
+                <Option value=''>Not Recipients Foreign</Option>
             );
         console.log('recipientsForeign:', recipientsForeign)
         recipientsForeign.forEach(recipient => {
@@ -132,8 +141,8 @@ class Recipient extends Component {
 
                             <Form.Item {...this.props.formItemLayout} label="Recipient's Full Name:">
                                 <Input type='text' disabled="true" value={fullNameRecipient} />
-                            </Form.Item></div>                       
-                            </TabPane>
+                            </Form.Item></div>
+                    </TabPane>
                     <TabPane
                         tab={
                             <span>
@@ -143,6 +152,23 @@ class Recipient extends Component {
                         key="2"
                     >
                         <div>
+                            <Form.Item {...this.props.formItemLayout} name="idBank" label="Select a Bank Foregin:"  rules={[
+                                { required: true, message: 'Please select a recipient bank!' },
+                            ]}>
+                                <Select
+                                    defaultValue="kianto"
+                                    mode='combobox'
+                                    placeholder="Select a Foregin Bank"
+                                    onChange={this.handleChange}
+                                    onSelect={this.handleSelectForeignBank}
+                                >
+                                    <Option value="kianto">Lam Bank VN</Option>
+                                    <Option value="rsa-bank">Nguyen Bank VN</Option>
+                                </Select>
+
+
+                            </Form.Item>
+
                             <Form.Item {...this.props.formItemLayout} hasFeedback label="Recipient's Wallet Number:" name="destinationWalletNumber" rules={[
                                 { required: true, message: 'Please select a recipient wallet!' },
                             ]}>
@@ -164,7 +190,7 @@ class Recipient extends Component {
                                     icon={<UsergroupAddOutlined />}
                                     onClick={this.handleAdd}>
                                     Add
-                    </Button>
+                                    </Button>
                             </Form.Item>
                             <Form.Item {...this.props.formItemLayout} label="Recipient's Bank:">
                                 <Input type='text' disabled="true" value={bankRecipient} />

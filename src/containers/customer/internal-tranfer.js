@@ -6,6 +6,7 @@ import {
   fetchRecipientsLocal,
   fetchRecipientsForeign,
   sendTransferInformation,
+  sendTransferInformationForegin,
   getOTP,
   setBalance,
   setValuesTranfer,
@@ -60,6 +61,10 @@ const mapDispatchToProps = (dispatch) => {
     sendTransferInformation: (email, originWalletNumber, destinationWalletNumber, payBy, amount, message, accessToken) => {
       return dispatch(sendTransferInformation(email, originWalletNumber, destinationWalletNumber, payBy, amount, message, accessToken));
     },
+    sendTransferInformationForegin: (data,accessToken) => {
+      return dispatch(sendTransferInformationForegin(data,accessToken));
+    },
+    
     toggleModalTransfer: () => dispatch(toggleModalTransfer()),
     toggleModalAddRecipient: (isShowModalAddRecipient) => dispatch(toggleModalAddRecipient(isShowModalAddRecipient)),
     addRecipientLocal: (username, receiverWalletNumber, remindName,usernameRecipient,isLocalAdd, accessToken) => dispatch(addRecipientLocal(username, receiverWalletNumber, remindName,usernameRecipient,isLocalAdd, accessToken)),

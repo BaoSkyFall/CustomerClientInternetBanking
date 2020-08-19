@@ -1,6 +1,35 @@
 import * as Types from '../../constants/ActionTypes';
 import callApi from '../../ultis/callApi';
 
+export const fetchTransactionHistoryLocalByUserName = (username, accessToken,isAll=true) => {
+    return (dispatch) => {
+        dispatch({ type: Types.FETCH_TRANSACTION_HISTORY_LOCAL });
+        return callApi(`api/money/historyLocalByUsername?username=${username}&isAll=${isAll}`, 'GET', {}, { x_accessToken: accessToken })
+        .then(res => {
+            console.log('resHistory:', res)
+            if (res.data.data) {
+                dispatch({
+                    type: Types.FETCH_TRANSACTION_HISTORY_LOCAL_SUCCESS,
+                    transactionHistory: res.data.data
+                });
+            }
+            else
+            {
+                dispatch({
+                    type: Types.FETCH_TRANSACTION_HISTORY_LOCAL_FAIL,
+                    messageError: "Can' find history"
+                });
+            }
+        })
+        .catch(error => {
+            dispatch({
+                type: Types.FETCH_TRANSACTION_HISTORY_LOCAL_FAIL,
+                messageError: "Server's error"
+            });
+        })
+    }
+}
+
 
 export const actRegisterPaymentRequest = (data, accessToken) => {
 

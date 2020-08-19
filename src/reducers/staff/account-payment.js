@@ -15,7 +15,8 @@ var initialState = {
     dob:'',
     walletNumber:'',
     balance:'',
-    messageError: ''
+    messageError: '',
+    transactionHistory:null
 }
 
 const paymentAccount = (state = initialState, action) => {
@@ -38,6 +39,7 @@ const paymentAccount = (state = initialState, action) => {
                 dob: action.user.dob,
                 walletNumber: action.user.walletNumber,
                 balance: action.user.balance,
+                
 
 
 
@@ -46,7 +48,17 @@ const paymentAccount = (state = initialState, action) => {
             return {
                 ...state,
                 isSearchLoading: false,
-                isSearchFailed: true
+                isSearchFailed: true,
+                 walletNumber: '',
+                email: '',
+                username: '',
+                name: '',
+                email: '',
+                phone: '',
+                idenityNumber: '',
+                dob: '',
+                walletNumber: '',
+                balance: '',
             };
         case Types.SEARCH_USERNAME_LOADING:
             return {
@@ -56,8 +68,10 @@ const paymentAccount = (state = initialState, action) => {
             };
         case Types.SEARCH_USERNAME_RESET:
             return{
+                ...state,
                 isLoading: false,
                 isSuccess: false,
+                
                 isFailed: false
             };
         case Types.CREATE_PAYMENT_ACCOUNT:
@@ -81,6 +95,27 @@ const paymentAccount = (state = initialState, action) => {
                 isLoading: false,
                 messageError: action.messageError
             }
+            case Types.FETCH_TRANSACTION_HISTORY_LOCAL:
+                return {
+                    ...state,
+                    isLoading: true,
+                    isSuccess: false,
+                    isFailed: false
+                };
+            case Types.FETCH_TRANSACTION_HISTORY_LOCAL_SUCCESS:
+                return {
+                    ...state,
+                    isSuccess: true,
+                    isLoading: false,
+                    transactionHistory: action.transactionHistory
+                }
+            case Types.FETCH_TRANSACTION_HISTORY_LOCAL_FAIL:
+                return {
+                    ...state,
+                    isFailed: true,
+                    isLoading: false,
+                    transactionHistory: null
+                }
         default: return { ...state };
     }
 }

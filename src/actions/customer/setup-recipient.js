@@ -50,10 +50,10 @@ const fetchRecipients = (username, accessToken) => {
     }
 }
 
-const updateRecipient = (id, id_recipient, name_recipient, recipients,accessToken) => {
+const updateRecipient = (id, id_recipient, name_recipient,walletId, recipients,accessToken) => {
     return (dispatch) => {
         dispatch({ type: UPDATE_RECIPIENT });
-        return callApi(`api/recipient/editRecipient`, 'PUT', {id,id_recipient,name_recipient}, { x_accesstoken: accessToken })
+        return callApi(`api/recipient/editRecipient`, 'PUT', {id,id_recipient,name_recipient,walletId}, { x_accesstoken: accessToken })
             .then(res => {
                 if (res.data.returnCode == 1) {
                     let index = _.findIndex(recipients, function(o) { return o.id == id && o.id_recipient == id_recipient })

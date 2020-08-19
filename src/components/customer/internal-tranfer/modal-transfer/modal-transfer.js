@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Button, Spin, Input, Row, InputNumber,Col } from 'antd';
+import { Modal, Button, Spin, Input, Row, InputNumber, Col } from 'antd';
 import { OTP_EMAIL, ACCESS_TOKEN_KEY } from '../../../../configs/client';
 import TextArea from 'antd/lib/input/TextArea';
 import OtpInput from 'react-otp-input';
@@ -33,27 +33,44 @@ class ModalTransfer extends React.Component {
     };
 
     handleOk = (e) => {
-        const { originWalletNumber, destinationWalletNumber, payBy, amount, message } = this.props.data;
+        const { originWalletNumber, destinationWalletNumber, idBank, payBy, amount, message } = this.props.data;
+        const { isLocal } = this.props;
         let otp = this.inputRef.current.state.value;
 
         const { accessToken, email } = this.props;
-        console.log('payBy:', payBy)
         console.log('amount:', amount)
         let decode = jwt(accessToken);
         if (otp) {
-            let data = {
-                otp,
-                email: decode.email,
-                from: originWalletNumber,
-                to: destinationWalletNumber,
-                money: amount,
-                isSaving: originWalletNumber / 1600000 > 1 ? true : false,
-                description: message,
-                paidBy: payBy == 'sender' ? 1 : 2
+
+            console.log('data123355:', this.props.data)
+            if (isLocal) {
+                let data = {
+                    otp,
+                    email: decode.email,
+                    from: originWalletNumber,
+                    to: destinationWalletNumber,
+                    money: amount,
+                    isSaving: originWalletNumber / 1600000 > 1 ? true : false,
+                    description: message,
+                    paidBy: payBy == 'sender' ? 1 : 2
+                }
+                this.props.sendTransferInformation(data, accessToken);
+
             }
-            console.log('data:', data);
-            this.props.sendTransferInformation(data, accessToken);
-            
+            else {
+
+                let data =
+                {
+                    idBank,
+                    idUser: decode.userId,
+                    credit_number: destinationWalletNumber,
+                    money: amount,
+                    content: message
+                }
+                this.props.sendTransferInformationForegin(data, accessToken);
+
+            }
+
         }
     }
 

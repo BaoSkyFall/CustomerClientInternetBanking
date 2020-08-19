@@ -156,7 +156,7 @@ const fetchRecipientsForeign = (id, accessToken) => {
     }
 }
 
-const trackRecipientForeign = (idBank,credit_number, accessToken) => {
+const trackRecipientForeign = (idBank, credit_number, accessToken) => {
     return (dispatch) => {
         dispatch({
             type: TRACK_RECIPIENT_FOREIGN
@@ -164,11 +164,16 @@ const trackRecipientForeign = (idBank,credit_number, accessToken) => {
 
         return callApi(`api/partner-bank/info-partner/${idBank}/${credit_number}`, 'GET', {}, { x_accessToken: accessToken })
             .then(res => {
-                console.log('res:', res.data)
-                if (res.data.returnCode ==1) {
+                console.log('resPartner:', res.data)
+                if (res.data.returnCode == 1) {
+                    let name
+                    if (res.data.data.lastname && res.data.data.firstname)
+                        name = `${res.data.data.lastname} ${res.data.data.firstname}`
+                    else
+                        name = res.data.data.data.name;
                     dispatch({
                         type: TRACK_RECIPIENT_FOREIGN_SUCCESS,
-                        fullNameRecipient: `${res.data.data.lastname} ${res.data.data.firstname}` ,
+                        fullNameRecipient: name,
                         bankRecipient: idBank,
 
                     })
@@ -251,7 +256,47 @@ const sendTransferInformation = (data, accessToken) => {
             })
     }
 }
-
+const sendTransferInformationForegin = (data, accessToken) => {
+    return (dispatch) => {
+        dispatch({
+            type: SEND_TRANSFER_INFORMATION
+        });
+        console.log('data3456:', data)
+        return callApi(`api/partner-bank/send-money`, 'POST', data, { x_accessToken: accessToken })
+            .then(res => {
+                console.log('res Tranfer Money:', res.data.message)
+                if (!res.data.errors) {
+                    let decoded = jwt(accessToken);
+                    console.log('data Transfer:', data);
+                    let date = moment(Date.now()).format("DD/MM/YYYY hh:mm a")
+                    pushNotificationFireBase(`You has been debited ${data.money} VNĐ success on ${date} to ${data.credit_number} in bank ${data.idBank}`, decoded.walletId);
+                    dispatch({
+                        type: TOGGLE_MODAL_TRANSFER,
+                    });
+                    dispatch({
+                        type: SEND_TRANSFER_INFORMATION_SUCCESS,
+                        // idTransaction: res.data.data.created_verification._id,
+                        messageSuccess: res.data.message
+                    });
+                    dispatch({
+                        type: RESET_MESSAGE
+                    })
+                }
+                else {
+                    dispatch({
+                        type: SEND_TRANSFER_INFORMATION_FAIL,
+                        messageError: res.data.message
+                    });
+                    dispatch({
+                        type: RESET_MESSAGE
+                    })
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            })
+    }
+}
 const getOTP = (email, accessToken) => {
     return (dispatch) => {
         dispatch({
@@ -341,6 +386,7 @@ export {
     fetchRecipientsLocal,
     fetchRecipientsForeign,
     sendTransferInformation,
+    sendTransferInformationForegin,
     getOTP,
     toggleModalTransfer,
     trackRecipientLocal,

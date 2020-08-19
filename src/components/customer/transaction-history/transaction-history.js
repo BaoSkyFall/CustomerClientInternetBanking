@@ -33,14 +33,14 @@ class TransactionHistory extends React.Component {
             className: 'column-money',
             dataIndex: 'type',
             width: '13%',
-            sorter: (a, b) => a.type.localeCompare(b.type),
+            // sorter: (a, b) => a.type.localeCompare(b.type),
         },
         {
             title: 'Date',
             dataIndex: 'time',
             // defaultSortOrder: 'descend',
             width: '20%',
-            sorter: (a, b) => a.time.localeCompare(b.time),
+            // sorter: (a, b) => a.time.localeCompare(b.time),
         }, {
             title: 'Amount (VND)',
             className: 'column-money',

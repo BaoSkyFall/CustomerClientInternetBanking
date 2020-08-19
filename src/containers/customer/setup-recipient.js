@@ -37,7 +37,7 @@ const mapDispatchToProps = (dispatch) => {
     fetchRecipients: (id, accessToken) => dispatch(fetchRecipients(id, accessToken)),
     addRecipientLocal: (username, receiverWalletNumber, remindName,usernameRecipient,isLocalAdd, accessToken) => dispatch(addRecipientLocal(username, receiverWalletNumber, remindName,usernameRecipient,isLocalAdd, accessToken)),
     addRecipientForeign: (username, receiverWalletNumber, remindName,bankLinkId,isLocalAdd, accessToken) => dispatch(addRecipientForeign(username, receiverWalletNumber, remindName,bankLinkId,isLocalAdd, accessToken)),
-    updateRecipient: (email, walletNumber, remindName,recipients, accessToken) => dispatch(updateRecipient(email, walletNumber, remindName, recipients,accessToken)),
+    updateRecipient: (email, walletNumber, remindName,walletId,recipients, accessToken) => dispatch(updateRecipient(email, walletNumber, remindName, walletId,recipients,accessToken)),
     deleteRecipient: (data, recipients, accessToken) => dispatch(deleteRecipient(data, recipients, accessToken)),
     resetStore: () => dispatch(resetStore()),
     toggleModalAddRecipient: (isShowModalAddRecipient) => dispatch(toggleModalAddRecipient(isShowModalAddRecipient)),

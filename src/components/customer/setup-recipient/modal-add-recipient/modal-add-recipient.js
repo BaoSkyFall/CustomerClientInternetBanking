@@ -31,7 +31,7 @@ class ModalAddRecipient extends React.Component {
         }
         else {
             this.formRef2.current.validateFields().then(values => {
-                console.log('values:', values)
+                console.log('values:Foregin Add', values)
                 let { walletNumber, remindName, bankRecipient } = values;
                 remindName = remindName ? remindName : '';
                 let decoded = jwt(accessToken);
@@ -142,7 +142,7 @@ class ModalAddRecipient extends React.Component {
                                 onChange={this.handleChange}
                             >
                                 <Option key='sender' value='kianto'>Lam Bank VN</Option>
-                                <Option key='receiver' value='thisisatokenfroma'>Nguyen Bank VN</Option>
+                                <Option key='receiver' value='rsa-bank'>Nguyen Bank VN</Option>
                             </Select>                        </Form.Item>
                         <Form.Item {...formItemLayout} label="Wallet number:" name="walletNumber" rules={[
                             { required: true, message: 'Please enter the wallet number!' },

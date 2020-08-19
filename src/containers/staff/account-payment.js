@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import PageStaff from './../../components/staffs/index/index';
-import { actSearchUserRequest, actRegisterPaymentRequest } from '../../actions/staff/payment';
+import { actSearchUserRequest, actRegisterPaymentRequest,fetchTransactionHistoryLocalByUserName } from '../../actions/staff/payment';
 
 class PaymentContainer extends Component {
     constructor(props) {
@@ -36,6 +36,7 @@ const mapStateToProps = state => {
         walletNumber: state.paymentAccount.walletNumber,
         balance: state.paymentAccount.balance,
         messageError: state.paymentAccount.messageError,
+        transactionHistory: state.paymentAccount.transactionHistory
     }
 }
 
@@ -46,6 +47,9 @@ const mapDispatchToProps = (dispatch, props) => {
         },
         registerPayment: (data) => {
             dispatch(actRegisterPaymentRequest(data));
+        },
+        fetchTransactionHistoryLocalByUserName: (username, accessToken,isAll=true)=>{
+            dispatch(fetchTransactionHistoryLocalByUserName(username, accessToken,isAll=true))
         }
     }
 }

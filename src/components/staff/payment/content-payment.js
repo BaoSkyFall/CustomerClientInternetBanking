@@ -25,45 +25,52 @@ class FormPayment extends React.Component {
     constructor(props) {
         super(props)
         this.columns = [{
-            title: 'Origin Wallet',
-            dataIndex: 'originWalletNumber',
+            title: 'From Origin Wallet',
+            dataIndex: 'user',
             defaultSortOrder: 'descend',
             width: '18%',
-            sorter: (a, b) => a.originWalletNumber.localeCompare(b.originWalletNumber),
+            // sorter: (a, b) => a.user - b.user,
         }, {
-            title: 'Destination Wallet',
-            dataIndex: 'destinationWalletNumber',
+            title: 'To Destination Wallet',
+            dataIndex: 'partner',
             width: '18%',
             defaultSortOrder: 'descend',
-            sorter: (a, b) => a.destinationWalletNumber.localeCompare(b.destinationWalletNumber),
-        }, {
+            // sorter: (a, b) => a.partner - b.partner,
+        },
+            , {
+            title: 'Action',
+            className: 'column-money',
+            dataIndex: 'type',
+            width: '13%',
+            // sorter: (a, b) => a.type.localeCompare(b.type),
+        },
+        {
             title: 'Date',
-            dataIndex: 'when',
-            defaultSortOrder: 'descend',
+            dataIndex: 'time',
+            // defaultSortOrder: 'descend',
             width: '20%',
-            sorter: (a, b) => a.when.localeCompare(b.when),
+            // sorter: (a, b) => a.time.localeCompare(b.time),
         }, {
             title: 'Amount (VND)',
             className: 'column-money',
-            dataIndex: 'amount',
-            defaultSortOrder: 'descend',
+            dataIndex: 'money_transfer',
+            // defaultSortOrder: 'descend',
             width: '15%',
-            sorter: (a, b) => a.amount.localeCompare(b.amount),
+            render: values => (
+
+                <span className="">
+                    {values > 0 ? '+' + values.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : values.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+
+                    } đ
+                </span>
+
+            ),
+            sorter: (a, b) => a.money_transfer - b.money_transfer,
         }, {
-            title: 'Charge Fee (VND)',
-            className: 'column-money',
-            dataIndex: 'chargeFee',
-            defaultSortOrder: 'descend',
-            width: '13%',
-            sorter: (a, b) => a.chargeFee.localeCompare(b.chargeFee),
-        }, {
-            title: "Message",
-            dataIndex: 'message',
-            defaultSortOrder: 'descend',
+            title: "Description",
+            dataIndex: 'description',
+            // defaultSortOrder: 'descend',
         }];
-        this.state = {
-            testValue: ''
-        }
     }
 
     componentDidUpdate() {
@@ -111,6 +118,7 @@ class FormPayment extends React.Component {
                 }
                 var accessToken = window.localStorage.getItem('accesstoken')
                 this.props.registerPayment(dt, accessToken);
+
             }
         });
     }
@@ -119,10 +127,10 @@ class FormPayment extends React.Component {
     showAlertRegister = () => {
         var { isSuccess, isFailed, isLoading, walletNumber, messageError } = this.props.paymentAccount;
         if (isSuccess) {
-            message.success(`Your new wallet number is: ${walletNumber}`, 8);
+            message.success(`Find an info with wallet Number is: ${walletNumber}`, 8);
             this.props.resetStatusSearch();
         } else if (isFailed) {
-            message.error('Register Error!', 3)
+            message.error('Cannot find user!', 3)
             this.props.resetStatusSearch();
         } else if (isLoading) {
             return (
@@ -142,10 +150,11 @@ class FormPayment extends React.Component {
                 </Col>
 
             );
-        } else if (isSearchFailed) {
-            message.error("Username is not exist!", 3)
-            this.props.resetStatusSearch();
-        }
+        } 
+        // else if (isSearchFailed) {
+        //     message.error("Username is not exist!", 3)
+        //     this.props.resetStatusSearch();
+        // }
     }
 
     validateToNextPassword = (rule, defaultValue, callback) => {
@@ -167,10 +176,11 @@ class FormPayment extends React.Component {
 
 
     render() {
-        var { walletNumber, name, dob, phone, indenityNumber, balance, email } = this.props.paymentAccount;
+        var { walletNumber,transactionHistory, name, dob, phone, indenityNumber, balance, email } = this.props.paymentAccount;
+        const {} =this.props;
         var data = this.props.paymentAccount;
-        console.log('walletNumber:', walletNumber);
-        console.log('data:', data)
+        console.log(' this.props.paymentAccount:',  this.props);
+                console.log('data:', data)
         const formItemLayout = {
             labelCol: {
                 xs: { span: 24 },
@@ -193,7 +203,9 @@ class FormPayment extends React.Component {
                             enterButton="Search"
                             size="large"
                             // value="phanhaibinh"
-                            onSearch={(defaultValue) => { this.props.searchUser(defaultValue, accessToken) }}
+                            onSearch={(defaultValue) => { this.props.searchUser(defaultValue, accessToken)
+                                                        this.props.fetchTransactionHistoryLocalByUserName(defaultValue, accessToken);
+                                                        }}
                         />
                     </Col>
                 </Row>
@@ -308,10 +320,10 @@ class FormPayment extends React.Component {
                 <hr />
                 <Table
                     columns={this.columns}
-                    dataSource={formatTransaction([])}
+                    dataSource={transactionHistory}
                     onChange={this.handleChange}
                     pagination={{ pageSize: 10 }}
-                    scroll={{ y: '60vh' }}
+                    scroll={{ y: '80vh' }}
                     bordered />
             </div>
         );

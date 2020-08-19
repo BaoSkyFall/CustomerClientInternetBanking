@@ -31,7 +31,9 @@ class InternalTransfer extends React.Component {
         this.props.fetchUserWallets(decode.userId, accessToken);
         this.props.fetchRecipientsLocal(decode.username, accessToken);
         this.props.fetchRecipientsForeign(decode.username, accessToken);
+        this.formRef.current.setFieldsValue({ idBank:'kianto' })
 
+       
         // fetch(`${URL_SERVER}/user/me`, {
         //     headers: {
         //         x_accesstoken: accessToken
@@ -69,12 +71,8 @@ class InternalTransfer extends React.Component {
         e.preventDefault();
         const { toggleModalTransfer, isLocal, setValuesTranfer } = this.props;
         let data = this.formRef.current.getFieldsValue();
-        if (isLocal) {
-            setValuesTranfer(data);
-        }
-        else {
+        setValuesTranfer(data);
 
-        }
         toggleModalTransfer();
     }
   

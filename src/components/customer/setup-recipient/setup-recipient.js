@@ -157,7 +157,7 @@ class SetupRecipient extends React.Component {
         const item = newData[index];
         console.log('item:', item)
         console.log('row:', row);
-        updateRecipient(row.id, row.id_recipient, row.name_recipient,recipients, accessToken);
+        updateRecipient(row.id, row.id_recipient, row.name_recipient,row.walletId,recipients, accessToken);
     }
 
     handleAdd = () => {

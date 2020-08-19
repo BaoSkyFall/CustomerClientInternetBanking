@@ -15,7 +15,12 @@ class Recharge extends Component {
         super(props)
 
     }
+    componentWillMount() {
+        console.log('componentWillMount:')
 
+        this.props.resetStatusRechargeSearch();
+
+    }
     componentDidMount() {
         const accessToken = localStorage.getItem(ACCESS_TOKEN_KEY) || '';
         // fetch(`${URL_SERVER}/user/me`, {
@@ -87,20 +92,29 @@ class Recharge extends Component {
         this.props.updateBalance(data, accessToken)
     }
     showAlertSearching = () => {
-        var { isSearchIdSuccess, isSearchIdFail, walletNumber } = this.props.recharge;
-        if (isSearchIdSuccess) {
-            message.success(`Your info have Wallet number: ${walletNumber}`, 8);
-            // this.props.resetStatusSearch();
-        } else if (isSearchIdFail) {
-            message.error("Can't find info from your Input, please check again!", 3)
-            // this.props.resetStatusSearch();
-            // } else if (isLoading) {
-            //     return (
-            //         <Row className="progress">
-            //             <Spin tip="Loading..." />
-            //         </Row>
-            //     );
+        var { isSearchIdSuccess, isSearchIdFail, walletNumber, name } = this.props.recharge;
+        if (walletNumber) {
+            if (isSearchIdSuccess) {
+                // message.success(`Find info success with name: ${name}`, 3);
+                // this.props.resetStatusSearch();
+                // this.props.resetStatusRechargeSearch();
+            }
+            else if (isSearchIdFail) {
+                // message.error("Can't find info from your Input, please check again!", 3)
+                // this.props.resetStatusRechargeSearch();
+
+                // this.props.resetStatusSearch();
+                // } else if (isLoading) {
+                //     return (
+                //         <Row className="progress">
+                //             <Spin tip="Loading..." />
+                //         </Row>
+                //     );
+            }
         }
+
+
+
     }
     render() {
         const formItemLayout = {

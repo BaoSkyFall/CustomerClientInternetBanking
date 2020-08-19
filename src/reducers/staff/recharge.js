@@ -97,6 +97,7 @@ const rechargeReducer = (state = initialState, action) => {
                 isUpdateSuccess: false,
                 isUpdateFail: false,
                 isUpdateLoading: false,
+                walletNumber:null,
                 amount: ''
             }
         default:
